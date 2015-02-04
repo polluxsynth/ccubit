@@ -1,2 +1,8 @@
 # bs3xconfig
-Create sysex file from text description file for configuration of Bitstream 3x control surface
+Create sysex file from text description file for configuration of Bitstream 3x control surface.
+
+Written in Python 2.7
+
+Usage: bs3xconfig [options] definition-file.txt bs3x-config-file.syx  
+
+See blofeld_sysex.txt for example of definition file with configuration using sysex strings for parameter changes.
