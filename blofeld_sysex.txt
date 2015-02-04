@@ -4,7 +4,7 @@
 group_no = 0
 group Blofeld osc+fl
 control_no = 8
-# top row
+# Top row: Osc 1 Octave, Semi, Detune, Shape, PW, FM amt, Lvl, Bal
 1       16..112 128'..1/2'              Osc 1 Octave
 2       52..76  -12..+12                Osc 1 Semitone
 3       0..127  -64..+63                Osc 1 Detune
@@ -21,7 +21,7 @@ control_no = 8
 61      0..127  0..127                  Mixer Osc 1 Lvl
 62      0..127  F1 64..F2 63            Mixer Osc 1 Bal
 
-# Second row
+# Second row: Osc 2
 17      16..112 128'..1/2'              Osc 2 Octave
 18      52..76  -12..+12                Osc 2 Semitone
 19      0..127  -64..+63                Osc 2 Detune
@@ -38,7 +38,7 @@ control_no = 8
 63      0..127  0..127                  Mixer Osc 2 Lvl
 64      0..127  F1 64..F2 63            Mixer Osc 2 Bal
 
-# Third row
+# Third row: Osc 3
 33      16..112 128'..1/2'              Osc 3 Octave
 34      52..76  -12..+12                Osc 3 Semitone
 35      0..127  -64..+63                Osc 3 Detune
@@ -55,8 +55,59 @@ control_no = 8
 65      0..127  0..127                  Mixer Osc 3 Lvl
 66      0..127  F1 64..F2 63            Mixer Osc 3 Bal
 
-stop
+# Fourth row: Filter 1 Fc, Q, Drive, Env, Filter 2 Fc, Q, Drive, Env
+#77      0..11   see 4.4                 Filt 1 Type
+78      0..127  0..127                  Filt 1 Cutoff
+80      0..127  0..127                  Filt 1 Resonance
+81      0..127  0..127                  Filt 1 Drive
+#82      0..12   see 4.11                Filt 1 Drive Curve
+#86      0..127  -200%..+196%            Filt 1 Keytrack
+87      0..127  -64..+63                Filt 1 Env Amount
+#88      0..127  -64..+63                Filt 1 Env Velocity
+#89      0..30   see 4.7                 Filt 1 Mod Source
+#90      0..127  -64..+63                Filt 1 Mod Amount
+#91      0..11   see 4.2                 Filt 1 FM Source
+#92      0..127  off..127                Filt 1 FM Amount
+#93      0..127  left 64..right 63       Filt 1 Pan
+#94      0..30   see 4.7                 Filt 1 Pan Source
+#95      0..127  -64..+63                Filt 1 Pan Amount
+
+#97      0..11   see 4.4                 Filt 2 Type
+98      0..127  0..127                  Filt 2 Cutoff
+100     0..127  0..127                  Filt 2 Resonance
+101     0..127  0..127                  Filt 2 Drive
+#102     0..12   see 4.11                Filt 2 Drive Curve
+#106     0..127  -200%..+196%            Filt 2 Keytrack
+107     0..127  -64..+63                Filt 2 Env Amount
+#108     0..127  -64..+63                Filt 2 Env Velocity
+#109     0..30   see 4.7                 Filt 2 Mod Source
+#110     0..127  -64..+63                Filt 2 Mod Amount
+#111     0..11   see 4.2                 Filt 2 FM Source
+#112     0..127  off..127                Filt 2 FM Amount
+#113     0..127  left 64..right 63       Filt 2 Pan
+#114     0..30   see 4.7                 Filt 2 Pan Source
+#115     0..127  -64..+63                Filt 2 Pan Amount
+
+# Sliders: Filter ADSR, Env ADSR
+#196     0..4    see 4.12                Filt Env Mode
+199     0..127  0..127                  Filt Env Atk
+#200     0..127  0..127                  Filt Env Atk Lvl
+201     0..127  0..127                  Filt Env Dec
+202     0..127  0..127                  Filt Env Sus
+#203     0..127  0..127                  Filt Env Dec 2
+#204     0..127  0..127                  Filt Env Sus 2
+205     0..127  0..127                  Filt Env Rel
+#208     0..4    see 4.12                Amp Env Mode
+211     0..127  0..127                  Amp Env Atk
+#212     0..127  0..127                  Amp Env Atk Lvl
+213     0..127  0..127                  Amp Env Dec
+214     0..127  0..127                  Amp Env Sus
+#215     0..127  0..127                  Amp Env Dec 2
+#216     0..127  0..127                  Amp Env Sus 2
+217     0..127  0..127                  Amp Env Rel
+
 # more later...
+stop
 
 50      0..30   see 4.7                 Osc Pitch Source
 51      0..127  -64..+63                Osc Pitch Amount
@@ -85,6 +136,7 @@ stop
 93      0..127  left 64..right 63       Filt 1 Pan
 94      0..30   see 4.7                 Filt 1 Pan Source
 95      0..127  -64..+63                Filt 1 Pan Amount
+
 97      0..11   see 4.4                 Filt 2 Type
 98      0..127  0..127                  Filt 2 Cutoff
 100     0..127  0..127                  Filt 2 Resonance
