@@ -2,8 +2,7 @@
 # From blofeld_sysex_v1_04.txt
 #
 group_no = 0
-group_name = Blofeld osc+fl
-setgroup
+group Blofeld osc+fl
 control_no = 8
 # top row
 1       16..112 128'..1/2'              Osc 1 Octave

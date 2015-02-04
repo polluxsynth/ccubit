@@ -40,7 +40,6 @@ params = { 'param_no': 0,
            'control_no': 0,
            'name_column': 40 }
 params['template'] = 'f0 3e 13 00 20 00 00 00 00 f7'
-params['group_name'] = 'Default group'
 params['channel_pos'] = 6
 params['par_hi_pos'] = 7
 params['par_lo_pos'] = 8
@@ -202,10 +201,14 @@ with open(infilename, 'r') as infile:
             if verbose:
                 print "Set", param, "to \"" + value + "\""
             continue
-        groupline = re.search("^setgroup", line)
+        groupline = re.search(r"^group\s+(?P<groupname>\w.*)", line)
         if groupline:
-           output.append(bs3x_global(BS3X_PARNO_GROUPNO, [params['group_no']]))
-           output.append(bs3x_groupname(params['group_name']))
+	   groupname = groupline.group('groupname')
+           group_no = params['group_no']
+           output.append(bs3x_global(BS3X_PARNO_GROUPNO, [group_no]))
+           output.append(bs3x_groupname(groupname))
+           if verbose:
+               print "Set name \"" + groupname + "\" for group number", group_no
            continue 
         stopline = re.search("^stop", line)
         if stopline:
