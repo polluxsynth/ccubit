@@ -49,6 +49,7 @@ params['MIDI1'] = 1
 params['MIDI2'] = 1
 params['min'] = 0
 params['max'] = 127
+params['CC'] = 0
 params['max_control_name_len'] = 16
 params['max_group_name_len'] = 14
 
@@ -65,7 +66,9 @@ def listify(str):
     return [ord(c) for c in list(str)]
 
 def listify_hex(hexstr):
-    return [int(c, 16) for c in hexstr.split(' ')]
+    if hexstr:
+        return [int(c, 16) for c in hexstr.split(' ')]
+    return [][:] # copy of empty list, in case someone assigns to it
 
 def bs3x_sysex(content, address, group, data):
     checksum = content != CONTENT_GLOBAL
@@ -80,11 +83,15 @@ def bs3x_sysex(content, address, group, data):
 
 def bs3x_mididef():
     midistring = listify_hex(params['template'])
-    if params['par_hi_pos']:
-        midistring[params['par_hi_pos'] - 1] = params['param_no'] >> 7
-    if params['par_lo_pos']:
-        midistring[params['par_lo_pos'] - 1] = params['param_no'] & 0x7f
-    ctrl_status_0 = 0 # cc value, bit 7 is cc(0)/note(1)
+    if midistring: # we have a template, assign sysex, use CC for CC value
+        if params['par_hi_pos']:
+            midistring[params['par_hi_pos'] - 1] = params['param_no'] >> 7
+        if params['par_lo_pos']:
+            midistring[params['par_lo_pos'] - 1] = params['param_no'] & 0x7f
+        control_no = params['CC'] # use previously assigned CC value
+    else: # no template => no sysex, we use param_no as CC value
+        control_no = params['param_no']
+    ctrl_status_0 = control_no # cc value, bit 7 is cc(0)/note(1)
     ctrl_status_1 = (0x10 if params['USB'] else 0) + \
                     (0x08 if params['MIDI1'] else 0) + \
                     (0x04 if params['MIDI2'] else 0)
