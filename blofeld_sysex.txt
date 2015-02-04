@@ -1,6 +1,18 @@
 # Waldorf Blofeld configuration for Bitstream 3x
 # From blofeld_sysex_v1_04.txt
+
+# Configuration for Blofeld parameter change using sysex
 #
+# Template for parameter change messages
+template = f0 3e 13 00 20 00 00 00 00 f7
+# Column in this file where parameter name starts
+name_column = 40
+# Positions in template string for various functions
+channel_pos = 6
+par_hi_pos = 7
+par_lo_pos = 8
+value_pos = 9
+
 group_no = 0
 group Blofeld osc+fl
 control_no = 8

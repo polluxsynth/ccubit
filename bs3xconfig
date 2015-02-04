@@ -35,21 +35,25 @@ ID0_CSCHECK = 0x08
 BS3X_PARNO_GROUPNAME = 0x28 # Manual sayx 0x25, but 1.8 fw has 0x28
 BS3X_PARNO_GROUPNO   = 0x07
 
+# Default values
 params = { 'param_no': 0,
            'group_no': 0,
            'control_no': 0,
-           'name_column': 40 }
-params['template'] = 'f0 3e 13 00 20 00 00 00 00 f7'
-params['channel_pos'] = 6
-params['par_hi_pos'] = 7
-params['par_lo_pos'] = 8
-params['value_pos'] = 9
+           'name_column': 0,
+           'template' : '',
+           'channel_pos': 0,
+           'par_hi_pos': 0,
+           'par_lo_pos': 0,
+           'value_pos': 0,
+           'CC': 0 }
+# Default output to all three destinations
 params['USB'] = 1
 params['MIDI1'] = 1
 params['MIDI2'] = 1
+# Normally set on each parameter line
 params['min'] = 0
 params['max'] = 127
-params['CC'] = 0
+# Bitstream 3x specific
 params['max_control_name_len'] = 16
 params['max_group_name_len'] = 14
 
