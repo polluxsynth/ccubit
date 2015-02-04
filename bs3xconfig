@@ -1,0 +1,224 @@
+#!/usr/bin/python
+#
+# From an input file with sysex defintions, create a Bitstream 3x sysex file.
+#
+#-------------------------------------------------------------------------
+#
+# Copyright (C) 2015  Ricard Wanderlof <ricard2015@butoba.net>
+#
+#--------------------------------------------------------------------------
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#----------------------------------------------------------------------------
+#
+import re, sys
+
+CONTENT_GLOBAL = 0
+CONTENT_LCDDEF = 1
+CONTENT_UPGRADE_DONTUSE = 2
+CONTENT_MIDIDEF = 3
+
+ID0_CSCHECK = 0x08
+
+BS3X_PARNO_GROUPNAME = 0x28 # Manual sayx 0x25, but 1.8 fw has 0x28
+BS3X_PARNO_GROUPNO   = 0x07
+
+params = { 'param_no': 0,
+           'group_no': 0,
+           'control_no': 0,
+           'name_column': 40 }
+params['template'] = 'f0 3e 13 00 20 00 00 00 00 f7'
+params['group_name'] = 'Default group'
+params['channel_pos'] = 6
+params['par_hi_pos'] = 7
+params['par_lo_pos'] = 8
+params['value_pos'] = 9
+params['USB'] = 1
+params['MIDI1'] = 1
+params['MIDI2'] = 1
+params['min'] = 0
+params['max'] = 127
+params['max_control_name_len'] = 16
+params['max_group_name_len'] = 14
+
+def midicsum(data):
+    return sum(data) & 127
+
+def nibbleize(data):
+    output = []
+    for element in data:
+        output += [(element & 0xf0) >> 4, element & 0x0f]
+    return output
+
+def listify(str):
+    return [ord(c) for c in list(str)]
+
+def listify_hex(hexstr):
+    return [int(c, 16) for c in hexstr.split(' ')]
+
+def bs3x_sysex(content, address, group, data):
+    checksum = content != CONTENT_GLOBAL
+    id0 = content | (ID0_CSCHECK if checksum else 0)
+    id1 = len(data)
+    id2 = address
+    id3 = group
+    sysex_head = listify_hex("f0 00 20 4f 00 01")
+    sysex_tail = [midicsum(data), 0xf7] if checksum else [0xf7]
+    sysex = sysex_head + [id0, id1, id2, id3] + data + sysex_tail
+    return sysex
+
+def bs3x_mididef():
+    midistring = listify_hex(params['template'])
+    if params['par_hi_pos']:
+        midistring[params['par_hi_pos'] - 1] = params['param_no'] >> 7
+    if params['par_lo_pos']:
+        midistring[params['par_lo_pos'] - 1] = params['param_no'] & 0x7f
+    ctrl_status_0 = 0 # cc value, bit 7 is cc(0)/note(1)
+    ctrl_status_1 = (0x10 if params['USB'] else 0) + \
+                    (0x08 if params['MIDI1'] else 0) + \
+                    (0x04 if params['MIDI2'] else 0)
+    ctrl_status_2 = 0 # bit 3 = split value, bits 0..2 = control curve 0 (lin)
+    midi_stringlen = len(midistring)
+    channel_pos = params['channel_pos']
+    control1_pos = params['value_pos']
+    control2_pos = 0 # no control2 pos used
+    control_min = params['min']
+    control_max = params['max']
+    cs_start_pos = 0 # no checksum
+    control_chain = 0 # bit 7: enable x-fader, bits 0..6: chained contol no - 1
+    data = nibbleize([ctrl_status_0, ctrl_status_1, ctrl_status_2,
+                      midi_stringlen, channel_pos, control1_pos, control2_pos,
+                      control_min, control_max, cs_start_pos, control_chain] +
+                      midistring)
+    return bs3x_sysex(CONTENT_MIDIDEF, params['control_no'], params['group_no'],
+                      data)
+
+def str_maximize(string, maxparam):
+    max_strlen = params[maxparam]
+    string = string[:max_strlen] # chop at max string length
+    string = string + " " * (max_strlen - len(string)) # pad with spaces
+    return string
+
+def bs3x_lcddef(name):
+    name = str_maximize(name, 'max_control_name_len')
+    midistring = listify(name)
+    data = nibbleize(midistring)
+    return bs3x_sysex(CONTENT_LCDDEF, params['control_no'], params['group_no'],
+                      data)
+
+def bs3x_global(param_no, data):
+    return bs3x_sysex(CONTENT_GLOBAL, param_no, 0, data)
+
+def bs3x_groupname(name):
+    name = str_maximize(name, 'max_group_name_len')
+    midistring = listify(name)
+    data = nibbleize(midistring)
+    return bs3x_global(BS3X_PARNO_GROUPNAME, data)
+
+def help():
+    print "Usage: mksyx [options] infile.txt outfile.syx"
+    print "Options:"
+    print "-h    this list"
+    print "-v    verbose"
+    print "Special file commands:"
+    print " setgroup    set group name"
+    print " stop        skip rest of file"
+    print "Default parameter values:"
+    for key in sorted(params):
+       print "", key, "=", params[key]
+
+# test                      
+#print "Name column", params['name_column']
+#print bs3x_sysex(CONTENT_MIDIDEF, 45, 56, [1, 2, 3])
+#print nibbleize([1, 2, 103, 255, 254, 253])
+#print bs3x_mididef()
+
+verbose = False
+output = []
+infilename = ""
+outfilename = ""
+
+for arg in sys.argv[1:]:
+    if arg[0] == '-':
+        if arg[1] == 'v':
+            verbose = True
+        if arg[1] == 'h':
+            help()
+            sys.exit()
+    else:
+        if not len(infilename):
+            infilename = arg
+            continue
+        else:
+            outfilename = arg
+            break
+
+with open(infilename, 'r') as infile:
+    for line in infile:
+        line = line.rstrip('\n\r')
+        if re.search(r"^[# ]", line) or len(line) == 0:
+            continue
+        paramline = re.search(r"^(?P<no>\d+)\s+(?P<min>\d+)[.][.](?P<max>\d+)", line)
+        if paramline:
+            name = line[params['name_column']:]
+            if verbose:
+                print "Param no", paramline.group('no'), \
+                      "Min", paramline.group('min'), \
+                      "Max", paramline.group('max'), \
+                      "Name \"" + name + "\""
+            params['min'] = int(paramline.group('min'))
+            params['max'] = int(paramline.group('max'))
+            params['param_no'] = int(paramline.group('no'))
+            output.append(bs3x_mididef())
+            output.append(bs3x_lcddef(name))
+            params['control_no'] += 1;
+            params['control_no'] &= 127; # wrap
+            continue
+        configline = re.search(r"^(?P<param>\w+)\s*=\s*(?P<value>.*)", line)
+        if configline:
+            #print "Param", configline.group('param'), \
+            #      "Value", configline.group('value')
+            param = configline.group('param')
+            value = configline.group('value')
+            if not param in params:
+               print "No such parameter \"" + param + "\""
+               continue
+            if type(params[param]) is int:
+               params[param] = int(value) # We keep numeric values in list
+            else:
+               params[param] = value # strings, or anything else
+            if verbose:
+                print "Set", param, "to \"" + value + "\""
+            continue
+        groupline = re.search("^setgroup", line)
+        if groupline:
+           output.append(bs3x_global(BS3X_PARNO_GROUPNO, [params['group_no']]))
+           output.append(bs3x_groupname(params['group_name']))
+           continue 
+        stopline = re.search("^stop", line)
+        if stopline:
+            break;
+        print "Can't understand \"" + line + "\""
+
+if verbose:
+    print output
+
+with open(outfilename, 'wb') as outfile:
+    blkcount = 0
+    for sysex_str in output:
+        outfile.write(str(bytearray(sysex_str)))
+        blkcount += 1
+
+print "Wrote", blkcount, "sysex blocks"

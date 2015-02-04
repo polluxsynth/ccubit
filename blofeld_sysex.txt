@@ -1,0 +1,321 @@
+# Waldorf Blofeld configuration for Bitstream 3x
+# From blofeld_sysex_v1_04.txt
+#
+group_no = 0
+group_name = Blofeld osc+fl
+setgroup
+control_no = 8
+# top row
+1       16..112 128'..1/2'              Osc 1 Octave
+2       52..76  -12..+12                Osc 1 Semitone
+3       0..127  -64..+63                Osc 1 Detune
+8       0..72   see 4.1                 Osc 1 Shape
+9       0..127  0..127                  Osc 1 Pulsewidth
+#4       40..88  -24..+24                Osc 1 Bend Range
+#5       0..127  -200%..+196%            Osc 1 Keytrack
+#6       0..11   see 4.2                 Osc 1 FM Source
+7       0..127  0..127                  Osc 1 FM Amount
+#10      0..30   see 4.7                 Osc 1 PWM Source
+#11      0..127  -64..+63                Osc 1 PWM Amount
+#14      0..1    on,off                  Osc 1 Limit WT
+#16      0..127  0..127                  Osc 1 Brilliance
+61      0..127  0..127                  Mixer Osc 1 Lvl
+62      0..127  F1 64..F2 63            Mixer Osc 1 Bal
+
+# Second row
+17      16..112 128'..1/2'              Osc 2 Octave
+18      52..76  -12..+12                Osc 2 Semitone
+19      0..127  -64..+63                Osc 2 Detune
+24      0..72   see 4.1                 Osc 2 Shape
+25      0..127  0..127                  Osc 2 Pulsewidth
+#20      40..88  -24..+24                Osc 2 Bend Range
+#21      0..127  -200%..+196%            Osc 2 Keytrack
+#22      0..11   see 4.2                 Osc 2 FM Source
+23      0..127  0..127                  Osc 2 FM Amount
+#26      0..30   see 4.7                 Osc 2 PWM Source
+#27      0..127  -64..+63                Osc 2 PWM Amount
+#30      0..1    on,off                  Osc 2 Limit WT
+#32      0..127  0..127                  Osc 2 Brilliance
+63      0..127  0..127                  Mixer Osc 2 Lvl
+64      0..127  F1 64..F2 63            Mixer Osc 2 Bal
+
+# Third row
+33      16..112 128'..1/2'              Osc 3 Octave
+34      52..76  -12..+12                Osc 3 Semitone
+35      0..127  -64..+63                Osc 3 Detune
+40      0..4    see 4.1                 Osc 3 Shape
+41      0..127  0..127                  Osc 3 Pulsewidth
+#36      40..88  -24..+24                Osc 3 Bend Range
+#37      0..127  -200%..+196%            Osc 3 Keytrack
+#38      0..11   see 4.2                 Osc 3 FM Source
+39      0..127  0..127                  Osc 3 FM Amount
+#42      0..30   see 4.7                 Osc 3 PWM Source
+#43      0..127  -64..+63                Osc 3 PWM Amount
+#48      0..127  0..127                  Osc 3 Brilliance
+#49      0..1    off,on                  Osc 2 Sync to O3
+65      0..127  0..127                  Mixer Osc 3 Lvl
+66      0..127  F1 64..F2 63            Mixer Osc 3 Bal
+
+stop
+# more later...
+
+50      0..30   see 4.7                 Osc Pitch Source
+51      0..127  -64..+63                Osc Pitch Amount
+53      0..1    off,on                  Glide
+56      0..3    see 4.3                 Glide Mode
+57      0..127  0..127                  Glide Rate
+58      0..127  see 4.10                Allocation Mode and Unisono
+59      0..127  0..127                  Unisono Uni Detune
+67      0..127  0..127                  Mixer Noise Lvl
+68      0..127  F1 64..F2 63            Mixer Noise Bal
+69      0..127  -64..+63                Mixer Noise Col
+71      0..127  0..127                  Mixer RingMod Lvl
+72      0..127  F1 64..F2 63            Mixer RingMod Bal
+77      0..11   see 4.4                 Filt 1 Type
+78      0..127  0..127                  Filt 1 Cutoff
+80      0..127  0..127                  Filt 1 Resonance
+81      0..127  0..127                  Filt 1 Drive
+82      0..12   see 4.11                Filt 1 Drive Curve
+86      0..127  -200%..+196%            Filt 1 Keytrack
+87      0..127  -64..+63                Filt 1 Env Amount
+88      0..127  -64..+63                Filt 1 Env Velocity
+89      0..30   see 4.7                 Filt 1 Mod Source
+90      0..127  -64..+63                Filt 1 Mod Amount
+91      0..11   see 4.2                 Filt 1 FM Source
+92      0..127  off..127                Filt 1 FM Amount
+93      0..127  left 64..right 63       Filt 1 Pan
+94      0..30   see 4.7                 Filt 1 Pan Source
+95      0..127  -64..+63                Filt 1 Pan Amount
+97      0..11   see 4.4                 Filt 2 Type
+98      0..127  0..127                  Filt 2 Cutoff
+100     0..127  0..127                  Filt 2 Resonance
+101     0..127  0..127                  Filt 2 Drive
+102     0..12   see 4.11                Filt 2 Drive Curve
+106     0..127  -200%..+196%            Filt 2 Keytrack
+107     0..127  -64..+63                Filt 2 Env Amount
+108     0..127  -64..+63                Filt 2 Env Velocity
+109     0..30   see 4.7                 Filt 2 Mod Source
+110     0..127  -64..+63                Filt 2 Mod Amount
+111     0..11   see 4.2                 Filt 2 FM Source
+112     0..127  off..127                Filt 2 FM Amount
+113     0..127  left 64..right 63       Filt 2 Pan
+114     0..30   see 4.7                 Filt 2 Pan Source
+115     0..127  -64..+63                Filt 2 Pan Amount
+117     0..1    parallel,serial         Filt Routing
+121     0..127  0..127                  Amp Volume
+122     0..127  -64..+63                Amp Velocity
+123     0..30   see 4.7                 Amp Mod Source
+124     0..127  -64..+63                Amp Mod Amount
+128     0..127  see 5                   Fx 1 Type
+129     0..127  0..127                  Fx 1 Mix
+130     0..127  see 5                   Fx 1 Par 1
+131     0..127  see 5                   Fx 1 Par 2
+132     0..127  see 5                   Fx 1 Par 3
+133     0..127  see 5                   Fx 1 Par 4
+134     0..127  see 5                   Fx 1 Par 5
+135     0..127  see 5                   Fx 1 Par 6
+136     0..127  see 5                   Fx 1 Par 7
+137     0..127  see 5                   Fx 1 Par 8
+138     0..127  see 5                   Fx 1 Par 9
+139     0..127  see 5                   Fx 1 Par 10
+140     0..127  see 5                   Fx 1 Par 11
+141     0..127  see 5                   Fx 1 Par 12
+142     0..127  see 5                   Fx 1 Par 13
+143     0..127  see 5                   Fx 1 Par 14
+144     0..127  see 5                   Fx 2 Type
+145     0..127  0..127                  Fx 2 Mix
+146     0..127  see 5                   Fx 2 Par 1
+147     0..127  see 5                   Fx 2 Par 2
+148     0..127  see 5                   Fx 2 Par 3
+149     0..127  see 5                   Fx 2 Par 4
+150     0..127  see 5                   Fx 2 Par 5
+151     0..127  see 5                   Fx 2 Par 6
+152     0..127  see 5                   Fx 2 Par 7
+153     0..127  see 5                   Fx 2 Par 8
+154     0..127  see 5                   Fx 2 Par 9
+155     0..127  see 5                   Fx 2 Par 10
+156     0..127  see 5                   Fx 2 Par 11
+157     0..127  see 5                   Fx 2 Par 12
+158     0..127  see 5                   Fx 2 Par 13
+159     0..127  see 5                   Fx 2 Par 14
+160     0..5    see 4.5                 LFO 1 Shape
+161     0..127  see 4.6                 LFO 1 Speed
+163     0..1    off,on                  LFO 1 Sync
+164     0..1    off,on                  LFO 1 Clocked
+165     0..127  free..355 degree        LFO 1 Start Phase
+166     0..127  0..127                  LFO 1 Delay
+167     0..127  -64..+63                LFO 1 Fade
+170     0..127  -200%..+196%            LFO 1 Keytrack
+172     0..5    see 4.5                 LFO 2 Shape
+173     0..127  see 4.6                 LFO 2 Speed
+175     0..1    off,on                  LFO 2 Sync
+176     0..1    off,on                  LFO 2 Clocked
+177     0..127  free..355 degree        LFO 2 Start Phase
+178     0..127  0..127                  LFO 2 Delay
+179     0..127  -64..+63                LFO 2 Fade
+182     0..127  -200%..+196%            LFO 2 Keytrack
+184     0..5    see 4.5                 LFO 3 Shape
+185     0..127  see 4.6                 LFO 3 Speed
+187     0..1    off,on                  LFO 3 Sync
+188     0..1    off,on                  LFO 3 Clocked
+189     0..127  free..355 degree        LFO 3 Start Phase
+190     0..127  0..127                  LFO 3 Delay
+191     0..127  -64..+63                LFO 3 Fade
+194     0..127  -200%..+196%            LFO 3 Keytrack
+196     0..4    see 4.12                Filt Env Mode
+199     0..127  0..127                  Filt Env Atk
+200     0..127  0..127                  Filt Env Atk Lvl
+201     0..127  0..127                  Filt Env Dec
+202     0..127  0..127                  Filt Env Sus
+203     0..127  0..127                  Filt Env Dec 2
+204     0..127  0..127                  Filt Env Sus 2
+205     0..127  0..127                  Filt Env Rel
+208     0..4    see 4.12                Amp Env Mode
+211     0..127  0..127                  Amp Env Atk
+212     0..127  0..127                  Amp Env Atk Lvl
+213     0..127  0..127                  Amp Env Dec
+214     0..127  0..127                  Amp Env Sus
+215     0..127  0..127                  Amp Env Dec 2
+216     0..127  0..127                  Amp Env Sus 2
+217     0..127  0..127                  Amp Env Rel
+220     0..4    see 4.12                Env 3 Mode
+223     0..127  0..127                  Env 3 Atk
+224     0..127  0..127                  Env 3 Atk Lvl
+225     0..127  0..127                  Env 3 Dec
+226     0..127  0..127                  Env 3 Sus
+227     0..127  0..127                  Env 3 Dec 2
+228     0..127  0..127                  Env 3 Sus 2
+229     0..127  0..127                  Env 3 Rel
+232     0..4    see 4.12                Env 4 Mode
+235     0..127  0..127                  Env 4 Atk
+236     0..127  0..127                  Env 4 Atk Lvl
+237     0..127  0..127                  Env 4 Dec
+238     0..127  0..127                  Env 4 Sus
+239     0..127  0..127                  Env 4 Dec 2
+240     0..127  0..127                  Env 4 Sus 2
+241     0..127  0..127                  Env 4 Rel
+245     0..30   see 4.7                 Modf 1 Source A
+246     0..30   see 4.7                 Modf 1 Source B
+247     0..7    see 4.9                 Modf 1 Op
+248     0..127  -64..+63                Modf 1 Constant
+249     0..30   see 4.7                 Modf 2 Source A
+250     0..30   see 4.7                 Modf 2 Source B
+251     0..7    see 4.9                 Modf 2 Op
+252     0..127  -64..+63                Modf 2 Constant
+253     0..30   see 4.7                 Modf 3 Source A
+254     0..30   see 4.7                 Modf 3 Source B
+255     0..7    see 4.9                 Modf 3 Op
+256     0..127  -64..+63                Modf 3 Constant
+257     0..30   see 4.7                 Modf 4 Source A
+258     0..30   see 4.7                 Modf 4 Source B
+259     0..7    see 4.9                 Modf 4 Op
+260     0..127  -64..+63                Modf 4 Constant
+261     0..30   see 4.7                 Mod 1 Source
+262     0..53   see 4.8                 Mod 1 Dest
+263     0..127  -64..+63                Mod 1 Amount
+264     0..30   see 4.7                 Mod 2 Source
+265     0..53   see 4.8                 Mod 2 Dest
+266     0..127  -64..+63                Mod 2 Amount
+267     0..30   see 4.7                 Mod 3 Source
+268     0..53   see 4.8                 Mod 3 Dest
+269     0..127  -64..+63                Mod 3 Amount
+270     0..30   see 4.7                 Mod 4 Source
+271     0..53   see 4.8                 Mod 4 Dest
+272     0..127  -64..+63                Mod 4 Amount
+273     0..30   see 4.7                 Mod 5 Source
+274     0..53   see 4.8                 Mod 5 Dest
+275     0..127  -64..+63                Mod 5 Amount
+276     0..30   see 4.7                 Mod 6 Source
+277     0..53   see 4.8                 Mod 6 Dest
+278     0..127  -64..+63                Mod 6 Amount
+279     0..30   see 4.7                 Mod 7 Source
+280     0..53   see 4.8                 Mod 7 Dest
+281     0..127  -64..+63                Mod 7 Amount
+282     0..30   see 4.7                 Mod 8 Source
+283     0..53   see 4.8                 Mod 8 Dest
+284     0..127  -64..+63                Mod 8 Amount
+285     0..30   see 4.7                 Mod 9 Source
+286     0..53   see 4.8                 Mod 9 Dest
+287     0..127  -64..+63                Mod 9 Amount
+288     0..30   see 4.7                 Mod 10 Source
+289     0..53   see 4.8                 Mod 10 Dest
+290     0..127  -64..+63                Mod 10 Amount
+291     0..30   see 4.7                 Mod 11 Source
+292     0..53   see 4.8                 Mod 11 Dest
+293     0..127  -64..+63                Mod 11 Amount
+294     0..30   see 4.7                 Mod 12 Source
+295     0..53   see 4.8                 Mod 12 Dest
+296     0..127  -64..+63                Mod 12 Amount
+297     0..30   see 4.7                 Mod 13 Source
+298     0..53   see 4.8                 Mod 13 Dest
+299     0..127  -64..+63                Mod 13 Amount
+300     0..30   see 4.7                 Mod 14 Source
+301     0..53   see 4.8                 Mod 14 Dest
+302     0..127  -64..+63                Mod 14 Amount
+303     0..30   see 4.7                 Mod 15 Source
+304     0..53   see 4.8                 Mod 15 Dest
+305     0..127  -64..+63                Mod 15 Amount
+306     0..30   see 4.7                 Mod 16 Source
+307     0..53   see 4.8                 Mod 16 Dest
+308     0..127  -64..+63                Mod 16 Amount
+311     0..3    off,on,One Shot,Hold    Arp Mode
+312     0..16   off..15                 Arp Pattern
+314     0..42   see 4.13                Arp Clock
+315     0..43   1/96..legato            Arp Length
+316     0..9    1..10                   Arp Octave
+317     0..3    Up,Down,Alt Up,Alt Down Arp Direction
+318     0..5    see 4.14                Arp Sort Order
+319     0..6    see 4.15                Arp Velocity
+320     0..127  0..127                  Arp Timing Factor
+322     0..1    off,on                  Arp Ptn Reset
+323     0..15   1..16                   Arp Ptn Length
+326     0..127  40..300                 Arp Tempo
+327     0..127  0sssgaaa                Arp Pattern Step/Glide/Accent 1
+328     0..127  sss=0: normal           Arp Pattern Step/Glide/Accent 2
+329     0..127  sss=1: pause            Arp Pattern Step/Glide/Accent 3
+330     0..127  sss=2: previous         Arp Pattern Step/Glide/Accent 4
+331     0..127  sss=3: first            Arp Pattern Step/Glide/Accent 5
+332     0..127  sss=4: last             Arp Pattern Step/Glide/Accent 6
+333     0..127  sss=5: first+last       Arp Pattern Step/Glide/Accent 7
+334     0..127  sss=6: chord            Arp Pattern Step/Glide/Accent 8
+335     0..127  sss=7: random           Arp Pattern Step/Glide/Accent 9
+336     0..127  g: glide off, on        Arp Pattern Step/Glide/Accent 10
+337     0..127  aaa=0: silent           Arp Pattern Step/Glide/Accent 11
+338     0..127  aaa>0: accent -96..+96  Arp Pattern Step/Glide/Accent 12
+339     0..127                          Arp Pattern Step/Glide/Accent 13 
+340     0..127                          Arp Pattern Step/Glide/Accent 14 
+341     0..127                          Arp Pattern Step/Glide/Accent 15 
+342     0..127                          Arp Pattern Step/Glide/Accent 16 
+343     0..127  0lll0ttt                Arp Pattern Timing/Length 1
+344     0..127  lll=0: legato           Arp Pattern Timing/Length 2
+345     0..127  lll>0: -3..+3           Arp Pattern Timing/Length 3
+346     0..127  ttt=0: random           Arp Pattern Timing/Length 4
+347     0..127  ttt>0: -3..+3           Arp Pattern Timing/Length 5
+348     0..127                          Arp Pattern Timing/Length 6 
+349     0..127                          Arp Pattern Timing/Length 7 
+350     0..127                          Arp Pattern Timing/Length 8 
+351     0..127                          Arp Pattern Timing/Length 9 
+352     0..127                          Arp Pattern Timing/Length 10 
+353     0..127                          Arp Pattern Timing/Length 11 
+354     0..127                          Arp Pattern Timing/Length 12 
+355     0..127                          Arp Pattern Timing/Length 13 
+356     0..127                          Arp Pattern Timing/Length 14 
+357     0..127                          Arp Pattern Timing/Length 15 
+358     0..127                          Arp Pattern Timing/Length 16 
+363     32..127 ASCII                   Name Char 1
+364     32..127 ASCII                   Name Char 2
+365     32..127 ASCII                   Name Char 3
+366     32..127 ASCII                   Name Char 4
+367     32..127 ASCII                   Name Char 5
+368     32..127 ASCII                   Name Char 6
+369     32..127 ASCII                   Name Char 7
+370     32..127 ASCII                   Name Char 8
+371     32..127 ASCII                   Name Char 9
+372     32..127 ASCII                   Name Char 10
+373     32..127 ASCII                   Name Char 11
+374     32..127 ASCII                   Name Char 12
+375     32..127 ASCII                   Name Char 13
+376     32..127 ASCII                   Name Char 14
+377     32..127 ASCII                   Name Char 15
+378     32..127 ASCII                   Name Char 16
+379     0..12   see 4.16                Category
