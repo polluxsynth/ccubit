@@ -56,6 +56,8 @@ params = { 'param_no': 0,
 # Control behavior
 params['button_mode'] = 'toggle' # or 'push' (or anything else)
 params['MIDI_delay_ms'] = 0 # 0, 30, 60, 90 (ms)
+params['chain_xfade'] = 'off'
+params['chain_control_no'] = 'off' # disabled
 # Default output to all three destinations
 params['USB'] = 'on'
 params['MIDI1'] = 'on'
@@ -135,6 +137,9 @@ def bs3x_mididef():
     control_max = intparam('max')
     cs_start_pos = 0 # no checksum
     control_chain = 0 # bit 7: enable x-fader, bits 0..6: chained contol no
+    if params['chain_control_no'] != 'off':
+        control_chain = intparam('chain_control_no') | \
+                        (0x80 if is_on('chain_xfade') else 0)
     data = nibbleize([ctrl_status_0, ctrl_status_1, ctrl_status_2,
                       midi_stringlen, channel_pos, control1_pos, control2_pos,
                       control_min, control_max, cs_start_pos, control_chain] +
@@ -240,6 +245,10 @@ with open(infilename, 'r') as infile:
             # Bump control number for next line
             params['control_no'] = intparam('control_no') + 1;
             params['control_no'] &= 127; # wrap
+            # Bump chained as well
+            if params['chain_control_no'] != 'off':
+                params['chain_control_no'] = intparam('chain_control_no') + 1;
+                params['chain_control_no'] &= 127; # wrap
             continue
         # Parameter assign
         # foo = bar
