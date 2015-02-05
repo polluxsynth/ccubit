@@ -128,7 +128,7 @@ button_mode = toggle
 #######################################################################
 
 group_no = 1
-group_name Blofeld osc
+group_name Blofeld oscs
 control_no = 8
 # Top row: Osc 1 Octave, Semi, Detune, Shape, PW, FM amt, Lvl, Bal
 1       16..112 128'..1/2'              Osc 1 Octave
@@ -220,6 +220,96 @@ button_mode = toggle
 53      0..1    off,on                  Glide
 58      0..16   off,dual                Unison (dual)
 #58      0..127  see 4.10                Allocation Mode and Unisono
+
+#######################################################################
+
+group_no = 2
+group_name Blofeld filters
+control_no = 8
+# Top row: Filter 1 Fc, Res, Keytrack, Drive, Env, Env amt, Env vel, type, pan
+78      0..127  0..127                  Filt 1 Cutoff
+80      0..127  0..127                  Filt 1 Resonance
+86      0..127  -200%..+196%            Filt 1 Keytrack
+81      0..127  0..127                  Filt 1 Drive
+#82      0..12   see 4.11                Filt 1 Drive Curve
+87      0..127  -64..+63                Filt 1 Env Amount
+88      0..127  -64..+63                Filt 1 Env Velocity
+77      0..11   see 4.4                 Filt 1 Type
+#89      0..30   see 4.7                 Filt 1 Mod Source
+#90      0..127  -64..+63                Filt 1 Mod Amount
+#91      0..11   see 4.2                 Filt 1 FM Source
+#92      0..127  off..127                Filt 1 FM Amount
+93      0..127  left 64..right 63       Filt 1 Pan
+#94      0..30   see 4.7                 Filt 1 Pan Source
+#95      0..127  -64..+63                Filt 1 Pan Amount
+
+# Second row: Filter 2 Fc, Res, Keytrack, Drive, Env, Env amt, Env vel, type
+98      0..127  0..127                  Filt 2 Cutoff
+100     0..127  0..127                  Filt 2 Resonance
+106     0..127  -200%..+196%            Filt 2 Keytrack
+101     0..127  0..127                  Filt 2 Drive
+#102     0..12   see 4.11                Filt 2 Drive Curve
+107     0..127  -64..+63                Filt 2 Env Amount
+108     0..127  -64..+63                Filt 2 Env Velocity
+97      0..11   see 4.4                 Filt 2 Type
+#109     0..30   see 4.7                 Filt 2 Mod Source
+#110     0..127  -64..+63                Filt 2 Mod Amount
+#111     0..11   see 4.2                 Filt 2 FM Source
+#112     0..127  off..127                Filt 2 FM Amount
+113     0..127  left 64..right 63       Filt 2 Pan
+#114     0..30   see 4.7                 Filt 2 Pan Source
+#115     0..127  -64..+63                Filt 2 Pan Amount
+
+# Third row: Common Fc, Res, Keytrack, Drive, Env, Env amt, Env vel, type
+chain_control_no = 16
+78      0..127  0..127                  Filt 1 Cutoff
+80      0..127  0..127                  Filt 1 Resonance
+86      0..127  -200%..+196%            Filt 1 Keytrack
+81      0..127  0..127                  Filt 1 Drive
+#82      0..12   see 4.11                Filt 1 Drive Curve
+87      0..127  -64..+63                Filt 1 Env Amount
+88      0..127  -64..+63                Filt 1 Env Velocity
+77      0..11   see 4.4                 Filt 1 Type
+#89      0..30   see 4.7                 Filt 1 Mod Source
+#90      0..127  -64..+63                Filt 1 Mod Amount
+#91      0..11   see 4.2                 Filt 1 FM Source
+#92      0..127  off..127                Filt 1 FM Amount
+93      0..127  left 64..right 63       Filt 1 Pan
+#94      0..30   see 4.7                 Filt 1 Pan Source
+#95      0..127  -64..+63                Filt 1 Pan Amount
+chain_control_no = off
+
+# Fourth row: F1 Mod amt, FM amt, Pan amt, F2 Mod amt, FM amt, Pan amt
+90      0..127  -64..+63                Filt 1 Mod Amount
+92      0..127  off..127                Filt 1 FM Amount
+95      0..127  -64..+63                Filt 1 Pan Amount
+110     0..127  -64..+63                Filt 2 Mod Amount
+112     0..127  off..127                Filt 2 FM Amount
+115     0..127  -64..+63                Filt 2 Pan Amount
+
+# Sliders: Filter ADSR, Env ADSR
+#196     0..4    see 4.12                Filt Env Mode
+199     0..127  0..127                  Filt Env Atk
+#200     0..127  0..127                  Filt Env Atk Lvl
+201     0..127  0..127                  Filt Env Dec
+202     0..127  0..127                  Filt Env Sus
+#203     0..127  0..127                  Filt Env Dec 2
+#204     0..127  0..127                  Filt Env Sus 2
+205     0..127  0..127                  Filt Env Rel
+#208     0..4    see 4.12                Amp Env Mode
+211     0..127  0..127                  Amp Env Atk
+#212     0..127  0..127                  Amp Env Atk Lvl
+213     0..127  0..127                  Amp Env Dec
+214     0..127  0..127                  Amp Env Sus
+#215     0..127  0..127                  Amp Env Dec 2
+#216     0..127  0..127                  Amp Env Sus 2
+217     0..127  0..127                  Amp Env Rel
+
+# Buttons
+control_no = 58
+button_mode = toggle
+82      0..1    see 4.11                Filt 1 Drive Curve
+102     0..1    see 4.11                Filt 2 Drive Curve
 
 # more later...
 stop
