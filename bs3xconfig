@@ -169,11 +169,14 @@ def bs3x_global(param_no, data):
     return bs3x_sysex(CONTENT_GLOBAL, param_no, 0, data)
 
 # Create BS3x sysex packet with Group name global parameter program data
-def bs3x_groupname(name):
+def bs3x_groupname(group_no, name):
     name = str_maximize(name, BS3X_MAX_GROUP_NAME_LEN)
     midistring = listify(name)
     data = nibbleize(midistring)
-    return bs3x_global(BS3X_PARNO_GROUPNAME, data)
+    # The manual says ID3 is always 0 for Global parameter access, but
+    # the source for fw 1.8 says it contains the group number for the
+    # group name case.
+    return bs3x_sysex(CONTENT_GLOBAL, BS3X_PARNO_GROUPNAME, group_no, data)
 
 # Output help texts, including default params dictionary and commands
 def help():
@@ -272,8 +275,7 @@ with open(infilename, 'r') as infile:
         if groupline:
 	   groupname = groupline.group('groupname')
            group_no = intparam('group_no')
-           output.append(bs3x_global(BS3X_PARNO_GROUPNO, [group_no]))
-           output.append(bs3x_groupname(groupname))
+           output.append(bs3x_groupname(group_no, groupname))
            if verbose:
                print "Set name \"" + groupname + "\" for group number", group_no
            continue 
