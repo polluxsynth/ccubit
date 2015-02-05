@@ -13,6 +13,8 @@ par_hi_pos = 7
 par_lo_pos = 8
 value_pos = 9
 
+#######################################################################
+
 group_no = 0
 group_name Blofeld osc+fl
 control_no = 8
@@ -122,6 +124,102 @@ control_no = 8
 control_no = 58
 button_mode = toggle
 49      0..1    off,on                  Osc 2 Sync to O3
+
+#######################################################################
+
+group_no = 1
+group_name Blofeld osc
+control_no = 8
+# Top row: Osc 1 Octave, Semi, Detune, Shape, PW, FM amt, Lvl, Bal
+1       16..112 128'..1/2'              Osc 1 Octave
+2       52..76  -12..+12                Osc 1 Semitone
+3       0..127  -64..+63                Osc 1 Detune
+8       0..72   see 4.1                 Osc 1 Shape
+9       0..127  0..127                  Osc 1 Pulsewidth
+#4       40..88  -24..+24                Osc 1 Bend Range
+#5       0..127  -200%..+196%            Osc 1 Keytrack
+#6       0..11   see 4.2                 Osc 1 FM Source
+7       0..127  0..127                  Osc 1 FM Amount
+#10      0..30   see 4.7                 Osc 1 PWM Source
+#11      0..127  -64..+63                Osc 1 PWM Amount
+#14      0..1    on,off                  Osc 1 Limit WT
+#16      0..127  0..127                  Osc 1 Brilliance
+61      0..127  0..127                  Mixer Osc 1 Lvl
+62      0..127  F1 64..F2 63            Mixer Osc 1 Bal
+
+# Second row: Osc 2
+17      16..112 128'..1/2'              Osc 2 Octave
+18      52..76  -12..+12                Osc 2 Semitone
+19      0..127  -64..+63                Osc 2 Detune
+24      0..72   see 4.1                 Osc 2 Shape
+25      0..127  0..127                  Osc 2 Pulsewidth
+#20      40..88  -24..+24                Osc 2 Bend Range
+#21      0..127  -200%..+196%            Osc 2 Keytrack
+#22      0..11   see 4.2                 Osc 2 FM Source
+23      0..127  0..127                  Osc 2 FM Amount
+#26      0..30   see 4.7                 Osc 2 PWM Source
+#27      0..127  -64..+63                Osc 2 PWM Amount
+#30      0..1    on,off                  Osc 2 Limit WT
+#32      0..127  0..127                  Osc 2 Brilliance
+63      0..127  0..127                  Mixer Osc 2 Lvl
+64      0..127  F1 64..F2 63            Mixer Osc 2 Bal
+
+# Third row: Osc 3
+33      16..112 128'..1/2'              Osc 3 Octave
+34      52..76  -12..+12                Osc 3 Semitone
+35      0..127  -64..+63                Osc 3 Detune
+40      0..4    see 4.1                 Osc 3 Shape
+41      0..127  0..127                  Osc 3 Pulsewidth
+#36      40..88  -24..+24                Osc 3 Bend Range
+#37      0..127  -200%..+196%            Osc 3 Keytrack
+#38      0..11   see 4.2                 Osc 3 FM Source
+39      0..127  0..127                  Osc 3 FM Amount
+#42      0..30   see 4.7                 Osc 3 PWM Source
+#43      0..127  -64..+63                Osc 3 PWM Amount
+#48      0..127  0..127                  Osc 3 Brilliance
+#49      0..1    off,on                  Osc 2 Sync to O3
+65      0..127  0..127                  Mixer Osc 3 Lvl
+66      0..127  F1 64..F2 63            Mixer Osc 3 Bal
+
+# Fourth row: Pitch mod amt, glide, uni detune, noise col, lvl, bal, rm lvl, bal
+#50      0..30   see 4.7                 Osc Pitch Source
+51      0..127  -64..+63                Osc Pitch Amount
+#53      0..1    off,on                  Glide
+#56      0..3    see 4.3                 Glide Mode
+57      0..127  0..127                  Glide Rate
+#58      0..127  see 4.10                Allocation Mode and Unisono
+59      0..127  0..127                  Unison Detune
+69      0..127  -64..+63                Mixer Noise Col
+67      0..127  0..127                  Mixer Noise Lvl
+68      0..127  F1 64..F2 63            Mixer Noise Bal
+71      0..127  0..127                  Mixer Ringm Lvl
+72      0..127  F1 64..F2 63            Mixer Ringm Bal
+
+# Sliders: Filter ADSR, Env ADSR
+#196     0..4    see 4.12                Filt Env Mode
+199     0..127  0..127                  Filt Env Atk
+#200     0..127  0..127                  Filt Env Atk Lvl
+201     0..127  0..127                  Filt Env Dec
+202     0..127  0..127                  Filt Env Sus
+#203     0..127  0..127                  Filt Env Dec 2
+#204     0..127  0..127                  Filt Env Sus 2
+205     0..127  0..127                  Filt Env Rel
+#208     0..4    see 4.12                Amp Env Mode
+211     0..127  0..127                  Amp Env Atk
+#212     0..127  0..127                  Amp Env Atk Lvl
+213     0..127  0..127                  Amp Env Dec
+214     0..127  0..127                  Amp Env Sus
+#215     0..127  0..127                  Amp Env Dec 2
+#216     0..127  0..127                  Amp Env Sus 2
+217     0..127  0..127                  Amp Env Rel
+
+# Buttons
+control_no = 58
+button_mode = toggle
+49      0..1    off,on                  Osc 2 Sync to O3
+53      0..1    off,on                  Glide
+58      0..16   off,dual                Unison (dual)
+#58      0..127  see 4.10                Allocation Mode and Unisono
 
 # more later...
 stop
