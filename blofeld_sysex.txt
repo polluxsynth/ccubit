@@ -118,6 +118,11 @@ control_no = 8
 #216     0..127  0..127                  Amp Env Sus 2
 217     0..127  0..127                  Amp Env Rel
 
+# Buttons
+control_no = 58
+button_mode = toggle
+49      0..1    off,on                  Osc 2 Sync to O3
+
 # more later...
 stop
 
