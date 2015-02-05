@@ -25,17 +25,20 @@
 #
 import re, sys
 
+# Values for bits [1:0] of BS3x ID0 byte
 CONTENT_GLOBAL = 0
 CONTENT_LCDDEF = 1
 CONTENT_UPGRADE_DONTUSE = 2
 CONTENT_MIDIDEF = 3
 
+# Set this in ID0 when enabling checksumming of sysex data
 ID0_CSCHECK = 0x08
 
-BS3X_PARNO_GROUPNAME = 0x28 # Manual sayx 0x25, but 1.8 fw has 0x28
+# Global Parameter Addresses. The higher ones vary with firmware version.
 BS3X_PARNO_GROUPNO   = 0x07
+BS3X_PARNO_GROUPNAME = 0x28 # Manual sayx 0x25, but 1.8 fw has 0x28
 
-# Default values
+# Our global parameter list, with default values.
 params = { 'param_no': 0,
            'group_no': 0,
            'control_no': 0,
@@ -57,23 +60,30 @@ params['max'] = 127
 params['max_control_name_len'] = 16
 params['max_group_name_len'] = 14
 
+# Return 7-bit checksum of all data in list
 def midicsum(data):
     return sum(data) & 127
 
+# Given list of bytes, output list of nibbles, high nibble first.
+# This, the output list is always twice the length of the input
 def nibbleize(data):
     output = []
     for element in data:
         output += [(element & 0xf0) >> 4, element & 0x0f]
     return output
 
+# Convert a string to a list of bytes
 def listify(str):
     return [ord(c) for c in list(str)]
 
+# Convert a string with hex numbers in the format "F0 34 5B 6E F7" to
+# a list of bytes.
 def listify_hex(hexstr):
     if hexstr:
         return [int(c, 16) for c in hexstr.split(' ')]
     return [][:] # copy of empty list, in case someone assigns to it
 
+# Create BS3x sysex packet
 def bs3x_sysex(content, address, group, data):
     checksum = content != CONTENT_GLOBAL
     id0 = content | (ID0_CSCHECK if checksum else 0)
@@ -85,6 +95,8 @@ def bs3x_sysex(content, address, group, data):
     sysex = sysex_head + [id0, id1, id2, id3] + data + sysex_tail
     return sysex
 
+# Create BS3x sysex packet with MIDI control assign data
+# All input data comes from params[] dictionary
 def bs3x_mididef():
     midistring = listify_hex(params['template'])
     if midistring: # we have a template, assign sysex, use CC for CC value
@@ -115,12 +127,15 @@ def bs3x_mididef():
     return bs3x_sysex(CONTENT_MIDIDEF, params['control_no'], params['group_no'],
                       data)
 
+# Chop string at max value, or pad with spaces if shorter
 def str_maximize(string, maxparam):
     max_strlen = params[maxparam]
     string = string[:max_strlen] # chop at max string length
     string = string + " " * (max_strlen - len(string)) # pad with spaces
     return string
 
+# Create BS3x sysex packet with LCD control assign data
+# All input data except string to put in LCD comes from params[] dictionary
 def bs3x_lcddef(name):
     name = str_maximize(name, 'max_control_name_len')
     midistring = listify(name)
@@ -128,15 +143,20 @@ def bs3x_lcddef(name):
     return bs3x_sysex(CONTENT_LCDDEF, params['control_no'], params['group_no'],
                       data)
 
+# Create BS3x sysex packet with Global parameter program data
+# Note that data is a list of parameter values; for most parameters,
+# the list will contain a single value, but for group name it will be a string.
 def bs3x_global(param_no, data):
     return bs3x_sysex(CONTENT_GLOBAL, param_no, 0, data)
 
+# Create BS3x sysex packet with Group name global parameter program data
 def bs3x_groupname(name):
     name = str_maximize(name, 'max_group_name_len')
     midistring = listify(name)
     data = nibbleize(midistring)
     return bs3x_global(BS3X_PARNO_GROUPNAME, data)
 
+# Output help texts, including default params dictionary and commands
 def help():
     print "Usage: mksyx [options] infile.txt outfile.syx"
     print "Options:"
@@ -155,11 +175,13 @@ def help():
 #print nibbleize([1, 2, 103, 255, 254, 253])
 #print bs3x_mididef()
 
+# Here we go!
 verbose = False
 output = []
 infilename = ""
 outfilename = ""
 
+# Scan command line arguments
 for arg in sys.argv[1:]:
     if arg[0] == '-':
         if arg[1] == 'v':
@@ -175,11 +197,19 @@ for arg in sys.argv[1:]:
             outfilename = arg
             break
 
+# Read input file one line at a tide and process it
 with open(infilename, 'r') as infile:
     for line in infile:
         line = line.rstrip('\n\r')
+        # Comment
         if re.search(r"^[# ]", line) or len(line) == 0:
             continue
+        # Generate param line.
+        # Causes generation of MIDI and LCD control assign sysex packets.
+        # Input line is in the form:
+        # <param_number> <min>..<max> <garbage> <name>
+        # where <name> starts at the 'name_column' parameter,
+        # and <garbage> can be anything.
         paramline = re.search(r"^(?P<no>\d+)\s+(?P<min>\d+)[.][.](?P<max>\d+)", line)
         if paramline:
             name = line[params['name_column']:]
@@ -196,6 +226,8 @@ with open(infilename, 'r') as infile:
             params['control_no'] += 1;
             params['control_no'] &= 127; # wrap
             continue
+        # Parameter assign
+        # foo = bar
         configline = re.search(r"^(?P<param>\w+)\s*=\s*(?P<value>.*)", line)
         if configline:
             #print "Param", configline.group('param'), \
@@ -212,6 +244,8 @@ with open(infilename, 'r') as infile:
             if verbose:
                 print "Set", param, "to \"" + value + "\""
             continue
+        # Group name set command
+        # Causes generation of Group name Global parameter sysex packets.
         groupline = re.search(r"^group\s+(?P<groupname>\w.*)", line)
         if groupline:
 	   groupname = groupline.group('groupname')
@@ -221,14 +255,18 @@ with open(infilename, 'r') as infile:
            if verbose:
                print "Set name \"" + groupname + "\" for group number", group_no
            continue 
+        # Stop command
         stopline = re.search("^stop", line)
         if stopline:
             break;
         print "Can't understand \"" + line + "\""
 
+# If user wants to know what we are going to output, show him.
 if verbose:
     print output
 
+# Output data to output file. Output so far is a list of sysex packets,
+# each packet represented as a list of bytes.
 with open(outfilename, 'wb') as outfile:
     blkcount = 0
     for sysex_str in output:
