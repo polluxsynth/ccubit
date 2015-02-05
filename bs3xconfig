@@ -38,6 +38,10 @@ ID0_CSCHECK = 0x08
 BS3X_PARNO_GROUPNO   = 0x07
 BS3X_PARNO_GROUPNAME = 0x28 # Manual sayx 0x25, but 1.8 fw has 0x28
 
+# BS3x constants
+BS3X_MAX_CONTROL_NAME_LEN = 16
+BS3X_MAX_GROUP_NAME_LEN = 14
+
 # Our global parameter list, with default values.
 params = { 'param_no': 0,
            'group_no': 0,
@@ -58,9 +62,6 @@ params['MIDI2'] = 1
 # Normally set on each parameter line
 params['min'] = 0
 params['max'] = 127
-# Bitstream 3x specific
-params['max_control_name_len'] = 16
-params['max_group_name_len'] = 14
 
 # Return 7-bit checksum of all data in list
 def midicsum(data):
@@ -131,8 +132,7 @@ def bs3x_mididef():
                       data)
 
 # Chop string at max value, or pad with spaces if shorter
-def str_maximize(string, maxparam):
-    max_strlen = params[maxparam]
+def str_maximize(string, max_strlen):
     string = string[:max_strlen] # chop at max string length
     string = string + " " * (max_strlen - len(string)) # pad with spaces
     return string
@@ -140,7 +140,7 @@ def str_maximize(string, maxparam):
 # Create BS3x sysex packet with LCD control assign data
 # All input data except string to put in LCD comes from params[] dictionary
 def bs3x_lcddef(name):
-    name = str_maximize(name, 'max_control_name_len')
+    name = str_maximize(name, BS3X_MAX_CONTROL_NAME_LEN)
     midistring = listify(name)
     data = nibbleize(midistring)
     return bs3x_sysex(CONTENT_LCDDEF, params['control_no'], params['group_no'],
@@ -154,7 +154,7 @@ def bs3x_global(param_no, data):
 
 # Create BS3x sysex packet with Group name global parameter program data
 def bs3x_groupname(name):
-    name = str_maximize(name, 'max_group_name_len')
+    name = str_maximize(name, BS3X_MAX_GROUP_NAME_LEN)
     midistring = listify(name)
     data = nibbleize(midistring)
     return bs3x_global(BS3X_PARNO_GROUPNAME, data)
