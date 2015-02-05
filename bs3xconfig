@@ -57,9 +57,9 @@ params = { 'param_no': 0,
 params['button_mode'] = 'toggle' # or 'push' (or anything else)
 params['MIDI_delay_ms'] = 0 # 0, 30, 60, 90 (ms)
 # Default output to all three destinations
-params['USB'] = 1
-params['MIDI1'] = 1
-params['MIDI2'] = 1
+params['USB'] = 'on'
+params['MIDI1'] = 'on'
+params['MIDI2'] = 'on'
 # Normally set on each parameter line
 params['min'] = 0
 params['max'] = 127
@@ -87,6 +87,14 @@ def listify_hex(hexstr):
         return [int(c, 16) for c in hexstr.split(' ')]
     return [][:] # copy of empty list, in case someone assigns to it
 
+# Convert on/off to bool.
+def is_on(param):
+    return params[param] == "on"
+
+# Grab parameter, convert to integer
+def intparam(param):
+    return int(params[param])
+
 # Create BS3x sysex packet
 def bs3x_sysex(content, address, group, data):
     checksum = content != CONTENT_GLOBAL
@@ -104,35 +112,35 @@ def bs3x_sysex(content, address, group, data):
 def bs3x_mididef():
     midistring = listify_hex(params['template'])
     if midistring: # we have a template, assign sysex, use CC for CC value
-        if params['par_hi_pos']:
-            midistring[params['par_hi_pos'] - 1] = params['param_no'] >> 7
-        if params['par_lo_pos']:
-            midistring[params['par_lo_pos'] - 1] = params['param_no'] & 0x7f
-        control_no = params['CC'] # use previously assigned CC value
+        if intparam('par_hi_pos'):
+            midistring[intparam('par_hi_pos') - 1] = intparam('param_no') >> 7
+        if intparam('par_lo_pos'):
+            midistring[intparam('par_lo_pos') - 1] = intparam('param_no') & 0x7f
+        control_no = intparam('CC') # use previously assigned CC value
     else: # no template => no sysex, we use param_no as CC value
-        control_no = params['param_no']
+        control_no = intparam('param_no')
     ctrl_status_0 = control_no # cc value, bit 7 is cc(0)/note(1)
-    delay_bits = min(params['MIDI_delay_ms'] / 30, 3)
-    ctrl_status_1 = (0x10 if params['USB'] else 0) | \
-                    (0x08 if params['MIDI1'] else 0) | \
-                    (0x04 if params['MIDI2'] else 0) | \
+    delay_bits = min(intparam('MIDI_delay_ms') / 30, 3)
+    ctrl_status_1 = (0x10 if is_on('USB') else 0) | \
+                    (0x08 if is_on('MIDI1') else 0) | \
+                    (0x04 if is_on('MIDI2') else 0) | \
                     (0x80 if params['button_mode'] == 'toggle' else 0) | \
                     delay_bits
     ctrl_status_2 = 0 # bit 3 = split value, bits 0..2 = control curve 0 (lin)
     midi_stringlen = len(midistring)
-    channel_pos = params['channel_pos']
-    control1_pos = params['value_pos']
+    channel_pos = intparam('channel_pos')
+    control1_pos = intparam('value_pos')
     control2_pos = 0 # no control2 pos used
-    control_min = params['min']
-    control_max = params['max']
+    control_min = intparam('min')
+    control_max = intparam('max')
     cs_start_pos = 0 # no checksum
-    control_chain = 0 # bit 7: enable x-fader, bits 0..6: chained contol no - 1
+    control_chain = 0 # bit 7: enable x-fader, bits 0..6: chained contol no
     data = nibbleize([ctrl_status_0, ctrl_status_1, ctrl_status_2,
                       midi_stringlen, channel_pos, control1_pos, control2_pos,
                       control_min, control_max, cs_start_pos, control_chain] +
                       midistring)
-    return bs3x_sysex(CONTENT_MIDIDEF, params['control_no'], params['group_no'],
-                      data)
+    return bs3x_sysex(CONTENT_MIDIDEF, intparam('control_no'),
+                      intparam('group_no'), data)
 
 # Chop string at max value, or pad with spaces if shorter
 def str_maximize(string, max_strlen):
@@ -146,8 +154,8 @@ def bs3x_lcddef(name):
     name = str_maximize(name, BS3X_MAX_CONTROL_NAME_LEN)
     midistring = listify(name)
     data = nibbleize(midistring)
-    return bs3x_sysex(CONTENT_LCDDEF, params['control_no'], params['group_no'],
-                      data)
+    return bs3x_sysex(CONTENT_LCDDEF, intparam('control_no'),
+                      intparam('group_no'), data)
 
 # Create BS3x sysex packet with Global parameter program data
 # Note that data is a list of parameter values; for most parameters,
@@ -218,18 +226,19 @@ with open(infilename, 'r') as infile:
         # and <garbage> can be anything.
         paramline = re.search(r"^(?P<no>\d+)\s+(?P<min>\d+)[.][.](?P<max>\d+)", line)
         if paramline:
-            name = line[params['name_column']:]
+            name = line[intparam('name_column'):]
             if verbose:
                 print "Param no", paramline.group('no'), \
                       "Min", paramline.group('min'), \
                       "Max", paramline.group('max'), \
                       "Name \"" + name + "\""
-            params['min'] = int(paramline.group('min'))
-            params['max'] = int(paramline.group('max'))
-            params['param_no'] = int(paramline.group('no'))
+            params['min'] = paramline.group('min')
+            params['max'] = paramline.group('max')
+            params['param_no'] = paramline.group('no')
             output.append(bs3x_mididef())
             output.append(bs3x_lcddef(name))
-            params['control_no'] += 1;
+            # Bump control number for next line
+            params['control_no'] = intparam('control_no') + 1;
             params['control_no'] &= 127; # wrap
             continue
         # Parameter assign
@@ -241,12 +250,9 @@ with open(infilename, 'r') as infile:
             param = configline.group('param')
             value = configline.group('value')
             if not param in params:
-               print "No such parameter \"" + param + "\""
-               continue
-            if type(params[param]) is int:
-               params[param] = int(value) # We keep numeric values in list
-            else:
-               params[param] = value # strings, or anything else
+                print "No such parameter \"" + param + "\""
+                continue
+            params[param] = value
             if verbose:
                 print "Set", param, "to \"" + value + "\""
             continue
@@ -256,7 +262,7 @@ with open(infilename, 'r') as infile:
         groupline = re.search(r"^group_name\s+(?P<groupname>\w.*)", line)
         if groupline:
 	   groupname = groupline.group('groupname')
-           group_no = params['group_no']
+           group_no = intparam('group_no')
            output.append(bs3x_global(BS3X_PARNO_GROUPNO, [group_no]))
            output.append(bs3x_groupname(groupname))
            if verbose:
