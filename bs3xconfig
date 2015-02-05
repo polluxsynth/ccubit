@@ -163,8 +163,8 @@ def help():
     print "-h    this list"
     print "-v    verbose"
     print "Special file commands:"
-    print " setgroup    set group name"
-    print " stop        skip rest of file"
+    print " group_name    set group name"
+    print " stop          skip rest of file"
     print "Default parameter values:"
     for key in sorted(params):
        print "", key, "=", params[key]
@@ -246,7 +246,8 @@ with open(infilename, 'r') as infile:
             continue
         # Group name set command
         # Causes generation of Group name Global parameter sysex packets.
-        groupline = re.search(r"^group\s+(?P<groupname>\w.*)", line)
+        # Since it is a command and not an assignment, there is no =
+        groupline = re.search(r"^group_name\s+(?P<groupname>\w.*)", line)
         if groupline:
 	   groupname = groupline.group('groupname')
            group_no = params['group_no']

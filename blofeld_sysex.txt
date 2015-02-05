@@ -14,7 +14,7 @@ par_lo_pos = 8
 value_pos = 9
 
 group_no = 0
-group Blofeld osc+fl
+group_name Blofeld osc+fl
 control_no = 8
 # Top row: Osc 1 Octave, Semi, Detune, Shape, PW, FM amt, Lvl, Bal
 1       16..112 128'..1/2'              Osc 1 Octave
