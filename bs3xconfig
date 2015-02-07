@@ -25,47 +25,6 @@
 #
 import re, sys
 
-# Values for bits [1:0] of BS3x ID0 byte
-CONTENT_GLOBAL = 0
-CONTENT_LCDDEF = 1
-CONTENT_UPGRADE_DONTUSE = 2
-CONTENT_MIDIDEF = 3
-
-# Set this in ID0 when enabling checksumming of sysex data
-ID0_CSCHECK = 0x08
-
-# Global Parameter Addresses. The higher ones vary with firmware version.
-BS3X_PARNO_GROUPNO   = 0x07
-BS3X_PARNO_GROUPNAME = 0x28 # Manual sayx 0x25, but 1.8 fw has 0x28
-
-# BS3x constants
-BS3X_MAX_CONTROL_NAME_LEN = 16
-BS3X_MAX_GROUP_NAME_LEN = 14
-
-# Our global parameter list, with default values.
-params = { 'param_no': 0,
-           'group_no': 0,
-           'control_no': 0,
-           'name_column': 0,
-           'template' : '',
-           'channel_pos': 0,
-           'par_hi_pos': 0,
-           'par_lo_pos': 0,
-           'value_pos': 0,
-           'CC': 0 }
-# Control behavior
-params['button_mode'] = 'toggle' # or 'push' (or anything else)
-params['MIDI_delay_ms'] = 0 # 0, 30, 60, 90 (ms)
-params['chain_xfade'] = 'off'
-params['chain_control_no'] = 'off' # disabled
-# Default output to all three destinations
-params['USB'] = 'on'
-params['MIDI1'] = 'on'
-params['MIDI2'] = 'on'
-# Normally set on each parameter line
-params['min'] = 0
-params['max'] = 127
-
 # Return 7-bit checksum of all data in list
 def midicsum(data):
     return sum(data) & 127
@@ -89,94 +48,144 @@ def listify_hex(hexstr):
         return [int(c, 16) for c in hexstr.split(' ')]
     return [][:] # copy of empty list, in case someone assigns to it
 
-# Convert on/off to bool.
-def is_on(param):
-    return params[param] == "on"
-
-# Grab parameter, convert to integer
-def intparam(param):
-    return int(params[param])
-
-# Create BS3x sysex packet
-def bs3x_sysex(content, address, group, data):
-    checksum = content != CONTENT_GLOBAL
-    id0 = content | (ID0_CSCHECK if checksum else 0)
-    id1 = len(data)
-    id2 = address
-    id3 = group
-    sysex_head = listify_hex("f0 00 20 4f 00 01")
-    sysex_tail = [midicsum(data), 0xf7] if checksum else [0xf7]
-    sysex = sysex_head + [id0, id1, id2, id3] + data + sysex_tail
-    return sysex
-
-# Create BS3x sysex packet with MIDI control assign data
-# All input data comes from params[] dictionary
-def bs3x_mididef():
-    midistring = listify_hex(params['template'])
-    if midistring: # we have a template, assign sysex, use CC for CC value
-        if intparam('par_hi_pos'):
-            midistring[intparam('par_hi_pos') - 1] = intparam('param_no') >> 7
-        if intparam('par_lo_pos'):
-            midistring[intparam('par_lo_pos') - 1] = intparam('param_no') & 0x7f
-        control_no = intparam('CC') # use previously assigned CC value
-    else: # no template => no sysex, we use param_no as CC value
-        control_no = intparam('param_no')
-    ctrl_status_0 = control_no # cc value, bit 7 is cc(0)/note(1)
-    delay_bits = min(intparam('MIDI_delay_ms') / 30, 3)
-    ctrl_status_1 = (0x10 if is_on('USB') else 0) | \
-                    (0x08 if is_on('MIDI1') else 0) | \
-                    (0x04 if is_on('MIDI2') else 0) | \
-                    (0x80 if params['button_mode'] == 'toggle' else 0) | \
-                    delay_bits
-    ctrl_status_2 = 0 # bit 3 = split value, bits 0..2 = control curve 0 (lin)
-    midi_stringlen = len(midistring)
-    channel_pos = intparam('channel_pos')
-    control1_pos = intparam('value_pos')
-    control2_pos = 0 # no control2 pos used
-    control_min = intparam('min')
-    control_max = intparam('max')
-    cs_start_pos = 0 # no checksum
-    control_chain = 0 # bit 7: enable x-fader, bits 0..6: chained contol no
-    if params['chain_control_no'] != 'off':
-        control_chain = intparam('chain_control_no') | \
-                        (0x80 if is_on('chain_xfade') else 0)
-    data = nibbleize([ctrl_status_0, ctrl_status_1, ctrl_status_2,
-                      midi_stringlen, channel_pos, control1_pos, control2_pos,
-                      control_min, control_max, cs_start_pos, control_chain] +
-                      midistring)
-    return bs3x_sysex(CONTENT_MIDIDEF, intparam('control_no'),
-                      intparam('group_no'), data)
-
 # Chop string at max value, or pad with spaces if shorter
 def str_maximize(string, max_strlen):
     string = string[:max_strlen] # chop at max string length
     string = string + " " * (max_strlen - len(string)) # pad with spaces
     return string
 
-# Create BS3x sysex packet with LCD control assign data
-# All input data except string to put in LCD comes from params[] dictionary
-def bs3x_lcddef(name):
-    name = str_maximize(name, BS3X_MAX_CONTROL_NAME_LEN)
-    midistring = listify(name)
-    data = nibbleize(midistring)
-    return bs3x_sysex(CONTENT_LCDDEF, intparam('control_no'),
-                      intparam('group_no'), data)
 
-# Create BS3x sysex packet with Global parameter program data
-# Note that data is a list of parameter values; for most parameters,
-# the list will contain a single value, but for group name it will be a string.
-def bs3x_global(param_no, data):
-    return bs3x_sysex(CONTENT_GLOBAL, param_no, 0, data)
+class parameter_list(object):
 
-# Create BS3x sysex packet with Group name global parameter program data
-def bs3x_groupname(group_no, name):
-    name = str_maximize(name, BS3X_MAX_GROUP_NAME_LEN)
-    midistring = listify(name)
-    data = nibbleize(midistring)
-    # The manual says ID3 is always 0 for Global parameter access, but
-    # the source for fw 1.8 says it contains the group number for the
-    # group name case.
-    return bs3x_sysex(CONTENT_GLOBAL, BS3X_PARNO_GROUPNAME, group_no, data)
+    def __init__(self, defaults):
+        self.parameters = defaults
+
+    def __setitem__(self, key, value):
+        self.parameters[key] = value
+
+    def __getitem__(self, key):
+        return self.parameters[key]
+
+    # Force conversion to int
+    def int(self, key):
+        return int(self.parameters[key])
+
+    # Convert on/off to bool.
+    def is_on(self, key):
+        return self.parameters[key] == "on"
+
+    # Does parameter param exist in parameter list?
+    def exists(self, key):
+        return key in self.parameters
+
+    # Dump sorted list of keys
+    def dump(self):
+        return sorted(self.parameters)
+
+class bitstream3x_config(object):
+
+    # Values for bits [1:0] of BS3x ID0 byte
+    CONTENT_GLOBAL = 0
+    CONTENT_LCDDEF = 1
+    CONTENT_UPGRADE_DONTUSE = 2
+    CONTENT_MIDIDEF = 3
+
+    # Set this in ID0 when enabling checksumming of sysex data
+    ID0_CSCHECK = 0x08
+
+    # Global Parameter Addresses. The higher ones vary with firmware version.
+    BS3X_PARNO_GROUPNO   = 0x07
+    BS3X_PARNO_GROUPNAME = 0x28 # Manual sayx 0x25, but 1.8 fw has 0x28
+
+    # BS3x constants
+    BS3X_MAX_CONTROL_NAME_LEN = 16
+    BS3X_MAX_GROUP_NAME_LEN = 14
+
+    # Initialize output data
+    def __init__(self):
+        self.output = []
+
+    # Create BS3x sysex packet
+    def make_sysex(self, content, address, group, data):
+        checksum = content != self.CONTENT_GLOBAL
+        id0 = content | (self.ID0_CSCHECK if checksum else 0)
+        id1 = len(data)
+        id2 = address
+        id3 = group
+        sysex_head = listify_hex("f0 00 20 4f 00 01")
+        sysex_tail = [midicsum(data), 0xf7] if checksum else [0xf7]
+        sysex = sysex_head + [id0, id1, id2, id3] + data + sysex_tail
+        self.output.append(sysex)
+    
+    # Create BS3x sysex packet with MIDI control assign data
+    # All input data comes from params[] dictionary
+    def set_mididef(self, params):
+        midistring = listify_hex(params['template'])
+        if midistring: # we have a template, assign sysex, use CC for CC value
+            if params.int('par_hi_pos'):
+                midistring[params.int('par_hi_pos') - 1] = \
+                    params.int('param_no') >> 7
+            if params.int('par_lo_pos'):
+                midistring[params.int('par_lo_pos') - 1] = \
+                    params.int('param_no') & 0x7f
+            control_no = params.int('CC') # use previously assigned CC value
+        else: # no template => no sysex, we use param_no as CC value
+            control_no = params.int('param_no')
+        ctrl_status_0 = control_no # cc value, bit 7 is cc(0)/note(1)
+        delay_bits = min(params.int('MIDI_delay_ms') / 30, 3)
+        ctrl_status_1 = (0x10 if params.is_on('USB') else 0) | \
+                        (0x08 if params.is_on('MIDI1') else 0) | \
+                        (0x04 if params.is_on('MIDI2') else 0) | \
+                        (0x80 if params['button_mode'] == 'toggle' else 0) | \
+                        delay_bits
+        ctrl_status_2 = 0 # bit 3 = split value, bits 0..2 = control curve 0 (lin)
+        midi_stringlen = len(midistring)
+        channel_pos = params.int('channel_pos')
+        control1_pos = params.int('value_pos')
+        control2_pos = 0 # no control2 pos used
+        control_min = params.int('min')
+        control_max = params.int('max')
+        cs_start_pos = 0 # no checksum
+        control_chain = 0 # bit 7: enable x-fader, bits 0..6: chained contol no
+        if params['chain_control_no'] != 'off':
+            control_chain = params.int('chain_control_no') | \
+                            (0x80 if params.is_on('chain_xfade') else 0)
+        data = nibbleize([ctrl_status_0, ctrl_status_1, ctrl_status_2,
+                          midi_stringlen, channel_pos, control1_pos, control2_pos,
+                          control_min, control_max, cs_start_pos, control_chain] +
+                          midistring)
+        self.make_sysex(self.CONTENT_MIDIDEF, params.int('control_no'),
+                        params.int('group_no'), data)
+    
+    # Create BS3x sysex packet with LCD control assign data
+    # All input data except string to put in LCD comes from params[] dictionary
+    def set_lcddef(self, params, name):
+        name = str_maximize(name, self.BS3X_MAX_CONTROL_NAME_LEN)
+        midistring = listify(name)
+        data = nibbleize(midistring)
+        self.make_sysex(self.CONTENT_LCDDEF, params.int('control_no'),
+                        params.int('group_no'), data)
+    
+    # Create BS3x sysex packet with Global parameter program data
+    # Note that data is a list of parameter values; for most parameters,
+    # the list will contain a single value, but for group name it will be a string.
+    def set_global(self, params, param_no, data):
+        self.make_sysex(self.CONTENT_GLOBAL, param_no, 0, data)
+    
+    # Create BS3x sysex packet with Group name global parameter program data
+    def set_groupname(self, params, group_no, name):
+        name = str_maximize(name, self.BS3X_MAX_GROUP_NAME_LEN)
+        midistring = listify(name)
+        data = nibbleize(midistring)
+        # The manual says ID3 is always 0 for Global parameter access, but
+        # the source for fw 1.8 says it contains the group number for the
+        # group name case.
+        self.make_sysex(self.CONTENT_GLOBAL, self.BS3X_PARNO_GROUPNAME,
+                        group_no, data)
+
+    # Return output vector
+    def get_mididata(self):
+        return self.output
 
 # Output help texts, including default params dictionary and commands
 def help():
@@ -188,20 +197,42 @@ def help():
     print " group_name    set group name"
     print " stop          skip rest of file"
     print "Default parameter values:"
-    for key in sorted(params):
+    for key in params.dump():
        print "", key, "=", params[key]
-
-# test                      
-#print "Name column", params['name_column']
-#print bs3x_sysex(CONTENT_MIDIDEF, 45, 56, [1, 2, 3])
-#print nibbleize([1, 2, 103, 255, 254, 253])
-#print bs3x_mididef()
 
 # Here we go!
 verbose = False
-output = []
 infilename = ""
 outfilename = ""
+config = bitstream3x_config()
+# Our global parameter list, with default values.
+params = parameter_list({ 'param_no': 0,
+                          'group_no': 0,
+                          'control_no': 0,
+                          'name_column': 0,
+                          'template' : '',
+                          'channel_pos': 0,
+                          'par_hi_pos': 0,
+                          'par_lo_pos': 0,
+                          'value_pos': 0,
+                          'CC': 0 })
+# Control behavior
+params['button_mode'] = 'toggle' # or 'push' (or anything else)
+params['MIDI_delay_ms'] = 0 # 0, 30, 60, 90 (ms)
+params['chain_xfade'] = 'off'
+params['chain_control_no'] = 'off' # disabled
+# Default output to all three destinations
+params['USB'] = 'on'
+params['MIDI1'] = 'on'
+params['MIDI2'] = 'on'
+# Normally set on each parameter line
+params['min'] = 0
+params['max'] = 127
+
+# test                      
+#print "Name column", params['name_column']
+#print nibbleize([1, 2, 103, 255, 254, 253])
+#print config.set_mididef(params)
 
 # Scan command line arguments
 for arg in sys.argv[1:]:
@@ -234,7 +265,7 @@ with open(infilename, 'r') as infile:
         # and <garbage> can be anything.
         paramline = re.search(r"^(?P<no>\d+)\s+(?P<min>\d+)[.][.](?P<max>\d+)", line)
         if paramline:
-            name = line[intparam('name_column'):]
+            name = line[params.int('name_column'):]
             if verbose:
                 print "Param no", paramline.group('no'), \
                       "Min", paramline.group('min'), \
@@ -243,15 +274,15 @@ with open(infilename, 'r') as infile:
             params['min'] = paramline.group('min')
             params['max'] = paramline.group('max')
             params['param_no'] = paramline.group('no')
-            output.append(bs3x_mididef())
-            output.append(bs3x_lcddef(name))
+            config.set_mididef(params)
+            config.set_lcddef(params, name)
             # Bump control number for next line
-            params['control_no'] = intparam('control_no') + 1;
-            params['control_no'] &= 127; # wrap
+            params['control_no'] = params.int('control_no') + 1
+            params['control_no'] &= 127 # wrap
             # Bump chained as well
             if params['chain_control_no'] != 'off':
-                params['chain_control_no'] = intparam('chain_control_no') + 1;
-                params['chain_control_no'] &= 127; # wrap
+                params['chain_control_no'] = params.int('chain_control_no') + 1
+                params['chain_control_no'] &= 127 # wrap
             continue
         # Parameter assign
         # foo = bar
@@ -261,7 +292,7 @@ with open(infilename, 'r') as infile:
             #      "Value", configline.group('value')
             param = configline.group('param')
             value = configline.group('value')
-            if not param in params:
+            if not params.exists(param):
                 print "No such parameter \"" + param + "\""
                 continue
             params[param] = value
@@ -274,26 +305,26 @@ with open(infilename, 'r') as infile:
         groupline = re.search(r"^group_name\s+(?P<groupname>\w.*)", line)
         if groupline:
 	   groupname = groupline.group('groupname')
-           group_no = intparam('group_no')
-           output.append(bs3x_groupname(group_no, groupname))
+           group_no = params.int('group_no')
+           config.set_groupname(params, group_no, groupname)
            if verbose:
                print "Set name \"" + groupname + "\" for group number", group_no
            continue 
         # Stop command
         stopline = re.search("^stop", line)
         if stopline:
-            break;
+            break
         print "Can't understand \"" + line + "\""
 
 # If user wants to know what we are going to output, show him.
 if verbose:
-    print output
+    print config.get_mididata()
 
 # Output data to output file. Output so far is a list of sysex packets,
 # each packet represented as a list of bytes.
 with open(outfilename, 'wb') as outfile:
     blkcount = 0
-    for sysex_str in output:
+    for sysex_str in config.get_mididata():
         outfile.write(str(bytearray(sysex_str)))
         blkcount += 1
 
