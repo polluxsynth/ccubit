@@ -105,6 +105,10 @@ class bitstream3x_config(object):
     def __init__(self):
         self.output = []
 
+    # Is control a knob?
+    def is_knob(self, control_no):
+        return control_no >= 6 and control_no < 50
+
     # Create BS3x sysex packet
     def make_sysex(self, content, address, group, data):
         checksum = content != self.CONTENT_GLOBAL
@@ -133,10 +137,14 @@ class bitstream3x_config(object):
             control_no = params.int('param_no')
         ctrl_status_0 = control_no # cc value, bit 7 is cc(0)/note(1)
         delay_bits = min(params.int('MIDI_delay_ms') / 30, 3)
+        if self.is_knob(params.int('control_no')):
+            toggle_or_hook = params['knob_mode'] == 'hook' # fw 1.8 only
+        else:
+            toggle_or_hook = params['button_mode'] == 'toggle'
         ctrl_status_1 = (0x10 if params.is_on('USB') else 0) | \
                         (0x08 if params.is_on('MIDI1') else 0) | \
                         (0x04 if params.is_on('MIDI2') else 0) | \
-                        (0x80 if params['button_mode'] == 'toggle' else 0) | \
+                        (0x80 if toggle_or_hook else 0) | \
                         delay_bits
         ctrl_status_2 = 0 # bit 3 = split value, bits 0..2 = control curve 0 (lin)
         midi_stringlen = len(midistring)
@@ -217,7 +225,8 @@ params = parameter_list({ 'param_no': 0,
                           'value_pos': 0,
                           'CC': 0 })
 # Control behavior
-params['button_mode'] = 'toggle' # or 'push' (or anything else)
+params['button_mode'] = 'toggle' # vs 'push' (or anything else)
+params['knob_mode'] = 'hook' # vs 'jump' (or anything else)
 params['MIDI_delay_ms'] = 0 # 0, 30, 60, 90 (ms)
 params['chain_xfade'] = 'off'
 params['chain_control_no'] = 'off' # disabled
