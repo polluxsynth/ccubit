@@ -1,0 +1,55 @@
+# Configuration for Janost dsp-G1
+#
+# CC template
+template = B0 00 00
+channel_pos = 1
+par_hi_pos = 0
+par_lo_pos = 2
+value_pos = 3
+# Column in this file where parameter name starts
+name_column = 20
+
+# Global for all knobs
+knob_mode = jump
+
+#######################################################################
+
+group_no = 19
+group_name dsp-G1
+
+control_no = 6
+0      0..127       Not used
+0      0..127       Not used
+control_no = 8
+# Top row: DCO + DCF
+76     0..127       DCO Wave
+4      0..127       DCO Wrap
+21     0..127       DCO 2/3 Range
+93     0..127       DCO 2/3 Detune
+
+74     0..127       DCF Cutoff
+71     0..127       DCF Resonance
+81     0..127       DCF Env Amt
+
+control_no = 16
+control_no = 24
+control_no = 32
+# Fourth row: LFO and output
+16     0..127       LFO Speed
+20     0..127       LFO Wave
+1      0..127       LFO Filt Amt
+control_no = 39
+7      0..127       Master Vol
+
+control_no = 40
+# Sliders: filter ADSR, amp ADSR
+82     0..127       DCF Env Atk
+83     0..127       DCF Env Dec
+28     0..127       DCF Env Sus
+29     0..127       DCF Env Rel
+
+73     0..127       DCA Env Atk
+75     0..127       DCA Env Dec
+31     0..127       DCA Env Sus
+72     0..127       DCA Env Rel
+
