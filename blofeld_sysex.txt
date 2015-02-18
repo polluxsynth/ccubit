@@ -8,75 +8,109 @@ template = f0 3e 13 00 20 00 00 00 00 f7
 # Column in this file where parameter name starts
 name_column = 40
 # Positions in template string for various functions
+# This is actually the Part No, but we put the channel number there so that
+# we can select the part number using the MIDI channel on the Bitstream.
 channel_pos = 6
 par_hi_pos = 7
 par_lo_pos = 8
 value_pos = 9
 
+# Global for all knobs
+knob_mode = jump
+
 #######################################################################
 
 group_no = 0
-group_name Blofeld osc+fl
+group_name Blofeld3oscyn
+control_no = 6
+0      0..127  0..127                   Not used
+0      0..127  0..127                   Not used
 control_no = 8
-# Top row: Osc 1 Octave, Semi, Detune, Shape, PW, FM amt, Lvl, Bal
-1       16..112 128'..1/2'              Osc 1 Octave
-2       52..76  -12..+12                Osc 1 Semitone
+# Top row: Osc 1 Detune, Octave, Shape, PW, Lvl, Filter 1 Fc, Q, Drive
 3       0..127  -64..+63                Osc 1 Detune
+1       16..112 128'..1/2'              Osc 1 Octave
+#2       52..76  -12..+12                Osc 1 Semitone
 8       0..72   see 4.1                 Osc 1 Shape
 9       0..127  0..127                  Osc 1 Pulsewidth
 #4       40..88  -24..+24                Osc 1 Bend Range
 #5       0..127  -200%..+196%            Osc 1 Keytrack
 #6       0..11   see 4.2                 Osc 1 FM Source
-7       0..127  0..127                  Osc 1 FM Amount
+#7       0..127  0..127                  Osc 1 FM Amount
 #10      0..30   see 4.7                 Osc 1 PWM Source
 #11      0..127  -64..+63                Osc 1 PWM Amount
 #14      0..1    on,off                  Osc 1 Limit WT
 #16      0..127  0..127                  Osc 1 Brilliance
-61      0..127  0..127                  Mixer Osc 1 Lvl
-62      0..127  F1 64..F2 63            Mixer Osc 1 Bal
+61      0..127  0..127                  Osc 1 Lvl
+#62      0..127  F1 64..F2 63            Mixer Osc 1 Bal
 
-# Second row: Osc 2
-17      16..112 128'..1/2'              Osc 2 Octave
+78      0..127  0..127                  Filt 1 Cutoff
+80      0..127  0..127                  Filt 1 Resonance
+81      0..127  0..127                  Filt 1 Drive
+
+# Second row: Osc 2 Semitones, Octave, Shape, PW, Lvl, Filter Env, EnvV, KBD
 18      52..76  -12..+12                Osc 2 Semitone
-19      0..127  -64..+63                Osc 2 Detune
+17      16..112 128'..1/2'              Osc 2 Octave
+#19      0..127  -64..+63                Osc 2 Detune
 24      0..72   see 4.1                 Osc 2 Shape
 25      0..127  0..127                  Osc 2 Pulsewidth
 #20      40..88  -24..+24                Osc 2 Bend Range
 #21      0..127  -200%..+196%            Osc 2 Keytrack
 #22      0..11   see 4.2                 Osc 2 FM Source
-23      0..127  0..127                  Osc 2 FM Amount
+#23      0..127  0..127                  Osc 2 FM Amount
 #26      0..30   see 4.7                 Osc 2 PWM Source
 #27      0..127  -64..+63                Osc 2 PWM Amount
 #30      0..1    on,off                  Osc 2 Limit WT
 #32      0..127  0..127                  Osc 2 Brilliance
-63      0..127  0..127                  Mixer Osc 2 Lvl
-64      0..127  F1 64..F2 63            Mixer Osc 2 Bal
+63      0..127  0..127                  Osc 2 Lvl
+#64      0..127  F1 64..F2 63            Mixer Osc 2 Bal
 
-# Third row: Osc 3
-33      16..112 128'..1/2'              Osc 3 Octave
-34      52..76  -12..+12                Osc 3 Semitone
+87      0..127  -64..+63                Filt 1 Env Amount
+88      0..127  -64..+63                Filt 1 Env Velocity
+92      0..127  off..127                Filt 1 FM Amount
+
+# Third row: Osc 3 Detune, Octave, Shape, PW, Lvl, Glide, Filt 2 Fc, Volume
 35      0..127  -64..+63                Osc 3 Detune
+33      16..112 128'..1/2'              Osc 3 Octave
+#34      52..76  -12..+12                Osc 3 Semitone
 40      0..4    see 4.1                 Osc 3 Shape
 41      0..127  0..127                  Osc 3 Pulsewidth
 #36      40..88  -24..+24                Osc 3 Bend Range
 #37      0..127  -200%..+196%            Osc 3 Keytrack
 #38      0..11   see 4.2                 Osc 3 FM Source
-39      0..127  0..127                  Osc 3 FM Amount
+#39      0..127  0..127                  Osc 3 FM Amount
 #42      0..30   see 4.7                 Osc 3 PWM Source
 #43      0..127  -64..+63                Osc 3 PWM Amount
 #48      0..127  0..127                  Osc 3 Brilliance
 #49      0..1    off,on                  Osc 2 Sync to O3
-65      0..127  0..127                  Mixer Osc 3 Lvl
-66      0..127  F1 64..F2 63            Mixer Osc 3 Bal
+65      0..127  0..127                  Osc 3 Lvl
+#66      0..127  F1 64..F2 63            Mixer Osc 3 Bal
 
-# Fourth row: Filter 1 Fc, Q, Drive, Env, Filter 2 Fc, Q, Drive, Env
+57      0..127  0..127                  Glide Rate
+98      0..127  0..127                  Filt 2 Cutoff
+121     0..127  0..127                  Amp Volume
+
+# Fourth row: Osc 1 FM, Fenv lvl, LFO2 Freq, Lvl, Noise lvl, LFO1 Freq, Sh, Lvl
+# We use Mod 15 for LFO 1 level (->M1/M2 amount, from Modif 1: MAX*32))
+# We use Mod 16 for LFO 2/Fenv output (->M3/M4 amount, from Modif 1: MAX*32))
+7       0..127  0..127                  Osc 1 FM
+161     0..127  see 4.6                 LFO 1 Speed
+160     0..5    see 4.5                 LFO 1 Shape
+#305     0..127  -64..+63                Mod 15 Amount
+305     0..127  -64..+63                LFO 1 Lvl
+67      0..127  0..127                  Noise Lvl
+173     0..127  see 4.6                 LFO 2 Speed
+#305     0..127  -64..+63                Mod 15 Amount
+172     0..5  see 4.6                   LFO 2 Shape
+#308     0..127  -64..+63                Mod 16 Amount
+308     0..127  -64..+63                LFO2/Fenv lvl
+
 #77      0..11   see 4.4                 Filt 1 Type
-78      0..127  0..127                  Filt 1 Cutoff
-80      0..127  0..127                  Filt 1 Resonance
-81      0..127  0..127                  Filt 1 Drive
+#78      0..127  0..127                  Filt 1 Cutoff
+#80      0..127  0..127                  Filt 1 Resonance
+#81      0..127  0..127                  Filt 1 Drive
 #82      0..12   see 4.11                Filt 1 Drive Curve
 #86      0..127  -200%..+196%            Filt 1 Keytrack
-87      0..127  -64..+63                Filt 1 Env Amount
+#87      0..127  -64..+63                Filt 1 Env Amount
 #88      0..127  -64..+63                Filt 1 Env Velocity
 #89      0..30   see 4.7                 Filt 1 Mod Source
 #90      0..127  -64..+63                Filt 1 Mod Amount
@@ -87,12 +121,12 @@ control_no = 8
 #95      0..127  -64..+63                Filt 1 Pan Amount
 
 #97      0..11   see 4.4                 Filt 2 Type
-98      0..127  0..127                  Filt 2 Cutoff
-100     0..127  0..127                  Filt 2 Resonance
-101     0..127  0..127                  Filt 2 Drive
+#98      0..127  0..127                  Filt 2 Cutoff
+#100     0..127  0..127                  Filt 2 Resonance
+#101     0..127  0..127                  Filt 2 Drive
 #102     0..12   see 4.11                Filt 2 Drive Curve
 #106     0..127  -200%..+196%            Filt 2 Keytrack
-107     0..127  -64..+63                Filt 2 Env Amount
+#107     0..127  -64..+63                Filt 2 Env Amount
 #108     0..127  -64..+63                Filt 2 Env Velocity
 #109     0..30   see 4.7                 Filt 2 Mod Source
 #110     0..127  -64..+63                Filt 2 Mod Amount
@@ -120,15 +154,43 @@ control_no = 8
 #216     0..127  0..127                  Amp Env Sus 2
 217     0..127  0..127                  Amp Env Rel
 
-# Buttons
+# Buttons: Sync, KBT 1/3, 2/3, LFO1 osc123/osc1, pitch/filt, LFO2/Fenv, osc123/osc1 pitch/pw1
 control_no = 58
 button_mode = toggle
-49      0..1    off,on                  Osc 2 Sync to O3
+# Sync 
+49      0..1    off,on                  Osc 2 Sync
+# KBT 1/3
+# We use Mod 13 for keytrack -> 1/3 F1 Cutoff
+# We use Mod 14 for keytrack -> 1/3 F1 Cutoff
+#299     0..127  -64..+63                 Mod 13 Amount
+299     64..114  -64..+63               KB track 1/3
+#302     0..127  -64..+63                 Mod 14 Amount
+302     64..123  -64..+63               KB track 2/3
+# LFO1 osc123/osc1
+#262     0..53   see 4.8                Mod 1 Dest
+262     0..1   see 4.8                  LFO1->Oscall/1
+# LFO1 pitch/filt
+#304     0..53   see 4.8                Mod 15 Dest
+304     50..51   see 4.8                LFO1->Ptch/Filt
+# LFO2 source LFO/Fenv
+#249     0..30   see 4.7                 Modf 2 Source A
+249     3..6   see 4.7                  Mod2 LFO/Fenv
+#LFO2 osc123/osc1
+#268     0..53   see 4.8                 Mod 3 Dest
+268     0..4   see 4.8                  Mod2->Oscall/2
+#LFO2 pitch/PW1
+#307     0..53   see 4.8                 Mod 16 Dest
+307     52..53   see 4.8                Mod2->Ptch/PW1
+
+stop
 
 #######################################################################
 
 group_no = 1
 group_name Blofeld oscs
+control_no = 6
+78      0..127  0..127                  Filt 1 Cutoff
+98      0..127  0..127                  Filt 2 Cutoff
 control_no = 8
 # Top row: Osc 1 Octave, Semi, Detune, Shape, PW, FM amt, Lvl, Bal
 1       16..112 128'..1/2'              Osc 1 Octave
@@ -216,24 +278,33 @@ control_no = 8
 # Buttons
 control_no = 58
 button_mode = toggle
+#6       0..11   see 4.2                 Osc 1 FM Source
+6       2..3   see 4.2                  Osc 1 FM Source
+#22      0..11   see 4.2                 Osc 2 FM Source
+22      1..3   see 4.2                  Osc 2 FM Source
+#38      0..11   see 4.2                 Osc 3 FM Source
+38      1..2   see 4.2                  Osc 3 FM Source
 49      0..1    off,on                  Osc 2 Sync to O3
 53      0..1    off,on                  Glide
-58      0..16   off,dual                Unison (dual)
 #58      0..127  see 4.10                Allocation Mode and Unisono
+58      0..16   off,dual                Unison (dual)
 
 #######################################################################
 
 group_no = 2
 group_name Blofeld filters
+control_no = 6
+78      0..127  0..127                  Filt 1 Cutoff
+98      0..127  0..127                  Filt 2 Cutoff
 control_no = 8
-# Top row: Filter 1 Fc, Res, Keytrack, Drive, Env, Env amt, Env vel, type, pan
+# Top row: Filter 1 Drive, Fc, Res, Env amt, Env vel, Keytrack, type, pan
+81      0..127  0..127                  Filt 1 Drive
 78      0..127  0..127                  Filt 1 Cutoff
 80      0..127  0..127                  Filt 1 Resonance
-86      0..127  -200%..+196%            Filt 1 Keytrack
-81      0..127  0..127                  Filt 1 Drive
 #82      0..12   see 4.11                Filt 1 Drive Curve
 87      0..127  -64..+63                Filt 1 Env Amount
 88      0..127  -64..+63                Filt 1 Env Velocity
+86      0..127  -200%..+196%            Filt 1 Keytrack
 77      0..11   see 4.4                 Filt 1 Type
 #89      0..30   see 4.7                 Filt 1 Mod Source
 #90      0..127  -64..+63                Filt 1 Mod Amount
@@ -243,14 +314,14 @@ control_no = 8
 #94      0..30   see 4.7                 Filt 1 Pan Source
 #95      0..127  -64..+63                Filt 1 Pan Amount
 
-# Second row: Filter 2 Fc, Res, Keytrack, Drive, Env, Env amt, Env vel, type
+# Second row: Filter 2 Drive, Fc, Res, Env amt, Env vel, Keytrack, type, pan
+101     0..127  0..127                  Filt 2 Drive
 98      0..127  0..127                  Filt 2 Cutoff
 100     0..127  0..127                  Filt 2 Resonance
-106     0..127  -200%..+196%            Filt 2 Keytrack
-101     0..127  0..127                  Filt 2 Drive
 #102     0..12   see 4.11                Filt 2 Drive Curve
 107     0..127  -64..+63                Filt 2 Env Amount
 108     0..127  -64..+63                Filt 2 Env Velocity
+106     0..127  -200%..+196%            Filt 2 Keytrack
 97      0..11   see 4.4                 Filt 2 Type
 #109     0..30   see 4.7                 Filt 2 Mod Source
 #110     0..127  -64..+63                Filt 2 Mod Amount
@@ -260,23 +331,29 @@ control_no = 8
 #114     0..30   see 4.7                 Filt 2 Pan Source
 #115     0..127  -64..+63                Filt 2 Pan Amount
 
-# Third row: Common Fc, Res, Keytrack, Drive, Env, Env amt, Env vel, type
+# Third row: Common Drive, Fc, Res, Env amt, Env vel, Drive, type
 chain_control_no = 16
-78      0..127  0..127                  Filt 1 Cutoff
-80      0..127  0..127                  Filt 1 Resonance
-86      0..127  -200%..+196%            Filt 1 Keytrack
-81      0..127  0..127                  Filt 1 Drive
-#82      0..12   see 4.11                Filt 1 Drive Curve
-87      0..127  -64..+63                Filt 1 Env Amount
-88      0..127  -64..+63                Filt 1 Env Velocity
-77      0..11   see 4.4                 Filt 1 Type
-#89      0..30   see 4.7                 Filt 1 Mod Source
-#90      0..127  -64..+63                Filt 1 Mod Amount
-#91      0..11   see 4.2                 Filt 1 FM Source
-#92      0..127  off..127                Filt 1 FM Amount
-93      0..127  left 64..right 63       Filt 1 Pan
-#94      0..30   see 4.7                 Filt 1 Pan Source
-#95      0..127  -64..+63                Filt 1 Pan Amount
+81      0..127  0..127                  Filt Drive
+78      0..127  0..127                  Filt Cutoff
+80      0..127  0..127                  Filt Resonance
+#82      0..12   see 4.11                Filt Drive Curve
+87      0..127  -64..+63                Filt Env Amount
+88      0..127  -64..+63                Filt Env Velocity
+86      0..127  -200%..+196%            Filt Keytrack
+# Note: Chain controls are buggy when the range is not 0..127 .
+# It seems like the 'input' to the chained parameter is not from the knob,
+# but from the scaled value, so that for instance chaining Filt 1 Type to
+# Filt 2 Type results in Filt 2 Type being generated by taking 0..11 and
+# re-scaling it again. This results in the parameter value hardly moving
+# (it reaches 1 when Filt 1 Type reaches 11).
+77      0..11   see 4.4                 Filt Type
+#89      0..30   see 4.7                 Filt Mod Source
+#90      0..127  -64..+63                Filt Mod Amount
+#91      0..11   see 4.2                 Filt FM Source
+#92      0..127  off..127                Filt FM Amount
+93      0..127  left 64..right 63       Filt Pan
+#94      0..30   see 4.7                 Filt Pan Source
+#95      0..127  -64..+63                Filt Pan Amount
 chain_control_no = off
 
 # Fourth row: F1 Mod amt, FM amt, Pan amt, F2 Mod amt, FM amt, Pan amt
@@ -286,6 +363,8 @@ chain_control_no = off
 110     0..127  -64..+63                Filt 2 Mod Amount
 112     0..127  off..127                Filt 2 FM Amount
 115     0..127  -64..+63                Filt 2 Pan Amount
+121     0..127  0..127                  Amp Volume
+122     0..127  -64..+63                Amp Velocity
 
 # Sliders: Filter ADSR, Env ADSR
 #196     0..4    see 4.12                Filt Env Mode
@@ -310,6 +389,123 @@ control_no = 58
 button_mode = toggle
 82      0..1    see 4.11                Filt 1 Drive Curve
 102     0..1    see 4.11                Filt 2 Drive Curve
+117     0..1    parallel,serial         Filt Routing
+
+##########################################################################
+
+group_no = 3
+group_name Blofeld mod I
+control_no = 8
+# Top row: mod amounts 1..8
+263     0..127  -64..+63                Mod 1 Amount
+266     0..127  -64..+63                Mod 2 Amount
+269     0..127  -64..+63                Mod 3 Amount
+272     0..127  -64..+63                Mod 4 Amount
+275     0..127  -64..+63                Mod 5 Amount
+278     0..127  -64..+63                Mod 6 Amount
+281     0..127  -64..+63                Mod 7 Amount
+284     0..127  -64..+63                Mod 8 Amount
+
+# Second row: mod amounts 9..16
+287     0..127  -64..+63                Mod 9 Amount
+290     0..127  -64..+63                Mod 10 Amount
+293     0..127  -64..+63                Mod 11 Amount
+296     0..127  -64..+63                Mod 12 Amount
+299     0..127  -64..+63                Mod 13 Amount
+302     0..127  -64..+63                Mod 14 Amount
+305     0..127  -64..+63                Mod 15 Amount
+308     0..127  -64..+63                Mod 16 Amount
+
+# Third row: LFO 1 + 2
+161     0..127  see 4.6                 LFO 1 Speed
+160     0..5    see 4.5                 LFO 1 Shape
+#163     0..1    off,on                  LFO 1 Sync
+#164     0..1    off,on                  LFO 1 Clocked
+#165     0..127  free..355 degree        LFO 1 Start Phase
+166     0..127  0..127                  LFO 1 Delay
+167     0..127  -64..+63                LFO 1 Fade
+#170     0..127  -200%..+196%            LFO 1 Keytrack
+
+173     0..127  see 4.6                 LFO 2 Speed
+172     0..5    see 4.5                 LFO 2 Shape
+#175     0..1    off,on                  LFO 2 Sync
+#176     0..1    off,on                  LFO 2 Clocked
+#177     0..127  free..355 degree        LFO 2 Start Phase
+178     0..127  0..127                  LFO 2 Delay
+179     0..127  -64..+63                LFO 2 Fade
+#182     0..127  -200%..+196%            LFO 2 Keytrack
+
+# Fourth row: LFO 3
+185     0..127  see 4.6                 LFO 3 Speed
+184     0..5    see 4.5                 LFO 3 Shape
+#187     0..1    off,on                  LFO 3 Sync
+#188     0..1    off,on                  LFO 3 Clocked
+#189     0..127  free..355 degree        LFO 3 Start Phase
+190     0..127  0..127                  LFO 3 Delay
+191     0..127  -64..+63                LFO 3 Fade
+#194     0..127  -200%..+196%            LFO 3 Keytrack
+
+control_no = 40
+# Sliders: Env 3 + 4
+#220     0..4    see 4.12                Env 3 Mode
+223     0..127  0..127                  Env 3 Atk
+#224     0..127  0..127                  Env 3 Atk Lvl
+225     0..127  0..127                  Env 3 Dec
+226     0..127  0..127                  Env 3 Sus
+#227     0..127  0..127                  Env 3 Dec 2
+#228     0..127  0..127                  Env 3 Sus 2
+229     0..127  0..127                  Env 3 Rel
+#232     0..4    see 4.12                Env 4 Mode
+235     0..127  0..127                  Env 4 Atk
+#236     0..127  0..127                  Env 4 Atk Lvl
+237     0..127  0..127                  Env 4 Dec
+238     0..127  0..127                  Env 4 Sus
+#239     0..127  0..127                  Env 4 Dec 2
+#240     0..127  0..127                  Env 4 Sus 2
+241     0..127  0..127                  Env 4 Rel
+
+#############################################################################
+
+group_no = 4
+group_name Blofeld mod II
+# Top row: LFO 1 complete
+control_no = 8
+161     0..127  see 4.6                 LFO 1 Speed
+160     0..5    see 4.5                 LFO 1 Shape
+166     0..127  0..127                  LFO 1 Delay
+167     0..127  -64..+63                LFO 1 Fade
+165     0..127  free..355 degree        LFO 1 Start Phase
+170     0..127  -200%..+196%            LFO 1 Keytrack
+
+control_no = 58
+163     0..1    off,on                  LFO 1 Sync
+164     0..1    off,on                  LFO 1 Clocked
+
+# Second row: LFO 1 complete
+control_no = 16
+173     0..127  see 4.6                 LFO 2 Speed
+172     0..5    see 4.5                 LFO 2 Shape
+178     0..127  0..127                  LFO 2 Delay
+179     0..127  -64..+63                LFO 2 Fade
+177     0..127  free..355 degree        LFO 2 Start Phase
+182     0..127  -200%..+196%            LFO 2 Keytrack
+
+control_no = 60
+175     0..1    off,on                  LFO 2 Sync
+176     0..1    off,on                  LFO 2 Clocked
+
+# Fourth row: LFO 3 complete
+control_no = 24
+185     0..127  see 4.6                 LFO 3 Speed
+184     0..5    see 4.5                 LFO 3 Shape
+190     0..127  0..127                  LFO 3 Delay
+191     0..127  -64..+63                LFO 3 Fade
+189     0..127  free..355 degree        LFO 3 Start Phase
+194     0..127  -200%..+196%            LFO 3 Keytrack
+
+control_no = 62
+187     0..1    off,on                  LFO 3 Sync
+188     0..1    off,on                  LFO 3 Clocked
 
 # more later...
 stop
