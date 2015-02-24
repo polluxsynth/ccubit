@@ -1,5 +1,7 @@
 #!/usr/bin/python
 #
+# ccubit
+#
 # From an input file with sysex defintions, create a Bitstream 3x sysex file.
 #
 #-------------------------------------------------------------------------
